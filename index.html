@@ -274,6 +274,51 @@
             font-weight: 600;
         }
 
+        /* Clickable chips for predefined tags */
+        .chip.clickable {
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .chip.clickable:hover {
+            background: var(--accent-purple);
+            color: white;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Tag Filtering Bar Styles */
+        .filter-bar {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .chip.filter-chip {
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            background: var(--surface);
+            border-color: var(--border);
+            color: var(--text-muted);
+        }
+
+        .chip.filter-chip:hover {
+            color: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+        }
+
+        .chip.filter-chip.active {
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+        }
+
         .btn-action {
             padding: 0.5rem 1rem;
             border-radius: 6px;
@@ -310,6 +355,26 @@
             color: #fff;
         }
 
+        /* Drag and Drop visual styles */
+        .drag-handle {
+            cursor: grab;
+            padding: 0 0.5rem;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+        .drag-over {
+            box-shadow: 0 -4px 0 var(--accent-cyan);
+            opacity: 0.8;
+        }
+        .dragging {
+            opacity: 0.4;
+        }
+
         /* --- Folder Layout --- */
         .folder-container {
             border: 1px solid var(--border);
@@ -317,6 +382,7 @@
             margin-bottom: 1rem;
             background: rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            transition: all 0.3s ease;
         }
         .folder-header {
             padding: 1rem 1.5rem;
@@ -421,7 +487,7 @@
             padding: 2rem;
             border-radius: 12px;
             width: 90%;
-            max-width: 400px;
+            max-width: 500px;
             text-align: center;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
             animation: slideUp 0.3s ease;
@@ -510,7 +576,15 @@
                     <option value="slide">Presentation (.pptx)</option>
                     <option value="link">External Link</option>
                 </select>
-                <input type="text" id="new-topic-tags" placeholder="Tags (comma separated, e.g., Midterm, Prefinal)">
+                <div style="flex:1; display:flex; flex-direction:column;">
+                    <input type="text" id="new-topic-tags" placeholder="Tags (comma separated)">
+                    <div style="display:flex; gap:0.5rem; margin-top:0.5rem; flex-wrap:wrap;">
+                        <span class="chip clickable" onclick="app.appendTag('new-topic-tags', 'Midterm')">+ Midterm</span>
+                        <span class="chip clickable" onclick="app.appendTag('new-topic-tags', 'Prefinal')">+ Prefinal</span>
+                        <span class="chip clickable" onclick="app.appendTag('new-topic-tags', 'Final')">+ Final</span>
+                        <span class="chip clickable" onclick="app.appendTag('new-topic-tags', 'Reviewer')">+ Reviewer</span>
+                    </div>
+                </div>
             </div>
             
             <div class="input-row">
@@ -534,6 +608,7 @@
         </div>
 
         <div id="view-topics" class="view-section">
+            <div id="topic-filters" class="filter-bar"></div>
             <div id="topics-list"></div>
         </div>
     </main>
@@ -559,7 +634,17 @@
                 <option value="slide">Presentation (.pptx)</option>
                 <option value="link">External Link</option>
             </select>
-            <input type="text" id="edit-topic-tags" placeholder="Tags (comma separated)">
+            
+            <div style="width:100%; display:flex; flex-direction:column; align-items:flex-start;">
+                <input type="text" id="edit-topic-tags" placeholder="Tags (comma separated)">
+                <div style="display:flex; gap:0.5rem; margin-top:0.5rem; flex-wrap:wrap;">
+                    <span class="chip clickable" onclick="app.appendTag('edit-topic-tags', 'Midterm')">+ Midterm</span>
+                    <span class="chip clickable" onclick="app.appendTag('edit-topic-tags', 'Prefinal')">+ Prefinal</span>
+                    <span class="chip clickable" onclick="app.appendTag('edit-topic-tags', 'Final')">+ Final</span>
+                    <span class="chip clickable" onclick="app.appendTag('edit-topic-tags', 'Reviewer')">+ Reviewer</span>
+                </div>
+            </div>
+
             <input type="text" id="edit-topic-url" placeholder="Direct Link / URL">
             <button class="btn-primary" onclick="app.saveEditTopic()">Save Changes</button>
             <div class="close-modal" onclick="app.closeEditModal()">Cancel</div>
@@ -616,6 +701,7 @@
             currentLevel: 'home',
             activeTermId: null,
             activeCourseId: null,
+            activeTagFilter: 'All', // New Filter State
 
             async init() {
                 await this.loadData();
@@ -628,7 +714,6 @@
             async loadData() {
                 let loadedFromSupabase = false;
 
-                // Try Supabase First
                 if (supabaseClient) {
                     try {
                         const { data, error } = await supabaseClient.from('rebyu_data').select('state').eq('id', 1).single();
@@ -641,7 +726,6 @@
                     }
                 }
 
-                // Fallback to LocalStorage if Supabase is offline/broken
                 if (!loadedFromSupabase) {
                     const storedData = localStorage.getItem('rebyu_data');
                     if (storedData) {
@@ -651,10 +735,8 @@
             },
 
             async saveData() {
-                // ALWAYS save to LocalStorage as a backup safety net
                 localStorage.setItem('rebyu_data', JSON.stringify(this.data));
 
-                // Save to Supabase if available
                 if (supabaseClient) {
                     try {
                         await supabaseClient.from('rebyu_data').update({ state: this.data }).eq('id', 1);
@@ -680,6 +762,21 @@
                     document.getElementById('new-topic-url').style.display = 'none';
                     document.getElementById('new-topic-file').style.display = 'block';
                 }
+            },
+
+            appendTag(inputId, tag) {
+                const input = document.getElementById(inputId);
+                let currentTags = input.value.split(',').map(t => t.trim()).filter(t => t.length > 0);
+                if (!currentTags.includes(tag)) {
+                    currentTags.push(tag);
+                    input.value = currentTags.join(', ');
+                }
+            },
+
+            // Set the active filter and re-render topics
+            setFilter(tag) {
+                this.activeTagFilter = tag;
+                this.renderTopics();
             },
 
             requestModeToggle() {
@@ -717,7 +814,6 @@
                 }
                 this.updateUI();
                 
-                // Re-render current view to show/hide Admin Edit buttons
                 if(this.currentLevel === 'course') this.renderTopics();
             },
 
@@ -732,6 +828,7 @@
                         this.renderCourses(); document.getElementById('view-courses').classList.add('active');
                     } else if (level === 'course') {
                         this.currentLevel = 'course'; this.activeCourseId = id;
+                        this.activeTagFilter = 'All'; // Reset filter when entering new course
                         this.renderTopics(); document.getElementById('view-topics').classList.add('active');
                     }
                     this.renderBreadcrumb(); this.updateUI();
@@ -782,7 +879,6 @@
                     return;
                 }
                 
-                // Injecting Dynamic Course Colors into inline style
                 container.innerHTML = term.courses.map(course => {
                     const color = course.color || 'var(--accent-cyan)';
                     return `
@@ -794,7 +890,53 @@
                 }).join('');
             },
 
-            // Renders a single topic (used individually or inside folders)
+            // --- Drag & Drop Topic Reordering Logic ---
+            dragStart(event, key) {
+                event.dataTransfer.setData('text/plain', key);
+                event.target.classList.add('dragging');
+            },
+            dragOver(event) {
+                event.preventDefault(); 
+                event.dataTransfer.dropEffect = 'move';
+            },
+            dragEnter(event) {
+                event.preventDefault();
+                const dropTarget = event.target.closest('[draggable="true"]');
+                if (dropTarget) dropTarget.classList.add('drag-over');
+            },
+            dragLeave(event) {
+                const dropTarget = event.target.closest('[draggable="true"]');
+                if (dropTarget) dropTarget.classList.remove('drag-over');
+            },
+            async drop(event, targetKey) {
+                event.preventDefault();
+                const draggedKey = event.dataTransfer.getData('text/plain');
+                
+                const dropTarget = event.target.closest('[draggable="true"]');
+                if (dropTarget) dropTarget.classList.remove('drag-over');
+                document.querySelectorAll('.dragging').forEach(el => el.classList.remove('dragging'));
+
+                if (!draggedKey || draggedKey === targetKey) return;
+
+                const term = this.data.find(t => t.id === this.activeTermId);
+                const course = term.courses.find(c => c.id === this.activeCourseId);
+                
+                const draggedItems = course.topics.filter(t => t.title.trim().toLowerCase() === draggedKey);
+                const remainingItems = course.topics.filter(t => t.title.trim().toLowerCase() !== draggedKey);
+                
+                let insertIndex = remainingItems.findIndex(t => t.title.trim().toLowerCase() === targetKey);
+                if (insertIndex === -1) insertIndex = remainingItems.length;
+                
+                course.topics = [
+                    ...remainingItems.slice(0, insertIndex),
+                    ...draggedItems,
+                    ...remainingItems.slice(insertIndex)
+                ];
+
+                await this.saveData();
+                this.renderTopics();
+            },
+
             renderSingleTopic(topic, isInsideFolder = false) {
                 let iconCls = '', iconTxt = '';
                 switch(topic.type) {
@@ -807,19 +949,29 @@
                 const actionTxt = topic.sourceMethod === 'file' ? 'Download' : 'View';
                 const tagsHtml = (topic.tags || []).map(tag => `<span class="chip">${tag}</span>`).join('');
                 
-                // Render Edit button if Admin
                 let editBtn = '';
+                let dragHandle = '';
+                let isDraggable = '';
+                let dndEvents = '';
+
                 if (this.mode === 'admin') {
                     editBtn = `<button class="btn-edit" onclick="app.openEditModal('${topic.id}')">✏️ Edit</button>`;
+                    
+                    if (!isInsideFolder) {
+                        const safeKey = topic.title.trim().toLowerCase().replace(/'/g, "\\'");
+                        dragHandle = `<div class="drag-handle">☰</div>`;
+                        isDraggable = `draggable="true"`;
+                        dndEvents = `ondragstart="app.dragStart(event, '${safeKey}')" ondragover="app.dragOver(event)" ondrop="app.drop(event, '${safeKey}')" ondragenter="app.dragEnter(event)" ondragleave="app.dragLeave(event)"`;
+                    }
                 }
 
-                // If inside folder, strip borders and margins for clean stacking
                 const extraStyle = isInsideFolder ? 'style="border: none; border-bottom: 1px solid var(--border); border-radius: 0; margin-bottom: 0;"' : '';
                 const titleSize = isInsideFolder ? '1rem' : '1.17em';
 
                 return `
-                    <div class="topic-item" ${extraStyle}>
+                    <div class="topic-item" ${extraStyle} ${isDraggable} ${dndEvents}>
                         <div class="topic-info">
+                            ${dragHandle}
                             <div class="icon-badge ${iconCls}">${iconTxt}</div>
                             <div>
                                 <h3 style="font-size: ${titleSize}">${topic.title}</h3>
@@ -837,36 +989,74 @@
             renderTopics() {
                 const term = this.data.find(t => t.id === this.activeTermId);
                 const course = term.courses.find(c => c.id === this.activeCourseId);
+                const filterContainer = document.getElementById('topic-filters');
                 const container = document.getElementById('topics-list');
                 
                 if (!course || course.topics.length === 0) {
+                    filterContainer.innerHTML = '';
                     container.innerHTML = `<p style="color: var(--text-muted)">No topics or files uploaded yet.</p>`;
                     return;
                 }
 
-                // Logic: Group items by Exact Title (case insensitive)
-                const groupedTopics = {};
+                // 1. Build Filter Bar Dynamically
+                const allTagsSet = new Set();
                 course.topics.forEach(topic => {
-                    const titleKey = topic.title.trim().toLowerCase();
-                    if (!groupedTopics[titleKey]) {
-                        groupedTopics[titleKey] = { title: topic.title.trim(), items: [] };
-                    }
-                    groupedTopics[titleKey].items.push(topic);
+                    if(topic.tags) topic.tags.forEach(tag => allTagsSet.add(tag));
                 });
 
-                const groupsArray = Object.values(groupedTopics);
+                let filterHtml = `<span class="chip filter-chip ${this.activeTagFilter === 'All' ? 'active' : ''}" onclick="app.setFilter('All')">All</span>`;
+                Array.from(allTagsSet).sort().forEach(tag => {
+                    const isActive = this.activeTagFilter === tag ? 'active' : '';
+                    filterHtml += `<span class="chip filter-chip ${isActive}" onclick="app.setFilter('${tag}')">${tag}</span>`;
+                });
+                filterContainer.innerHTML = filterHtml;
+
+                // 2. Filter the topics array based on activeTagFilter
+                const filteredTopics = this.activeTagFilter === 'All' 
+                    ? course.topics 
+                    : course.topics.filter(t => t.tags && t.tags.includes(this.activeTagFilter));
+
+                if (filteredTopics.length === 0) {
+                    container.innerHTML = `<p style="color: var(--text-muted)">No items found for this tag.</p>`;
+                    return;
+                }
+
+                // 3. Group and Render the filtered topics
+                const groupedTopics = new Map();
+                filteredTopics.forEach(topic => {
+                    const titleKey = topic.title.trim().toLowerCase();
+                    if (!groupedTopics.has(titleKey)) {
+                        groupedTopics.set(titleKey, { title: topic.title.trim(), items: [] });
+                    }
+                    groupedTopics.get(titleKey).items.push(topic);
+                });
+
+                const groupsArray = Array.from(groupedTopics.values());
 
                 container.innerHTML = groupsArray.map(group => {
-                    // If only 1 file with this title, render normally
                     if (group.items.length === 1) {
                         return this.renderSingleTopic(group.items[0]);
                     } 
-                    // If multiple files share the title, render a Folder block
                     else {
                         const innerFilesHtml = group.items.map(item => this.renderSingleTopic(item, true)).join('');
+                        
+                        let dragHandle = '';
+                        let isDraggable = '';
+                        let dndEvents = '';
+
+                        if (this.mode === 'admin') {
+                            const safeKey = group.title.toLowerCase().replace(/'/g, "\\'");
+                            dragHandle = `<div class="drag-handle" style="margin-left:-0.5rem;">☰</div>`;
+                            isDraggable = `draggable="true"`;
+                            dndEvents = `ondragstart="app.dragStart(event, '${safeKey}')" ondragover="app.dragOver(event)" ondrop="app.drop(event, '${safeKey}')" ondragenter="app.dragEnter(event)" ondragleave="app.dragLeave(event)"`;
+                        }
+
                         return `
-                            <div class="folder-container">
-                                <div class="folder-header">📁 ${group.title} <span style="font-size: 0.8rem; color: var(--text-muted); opacity: 0.8; font-weight: normal;">(${group.items.length} Files)</span></div>
+                            <div class="folder-container" ${isDraggable} ${dndEvents}>
+                                <div class="folder-header">
+                                    ${dragHandle}
+                                    📁 ${group.title} <span style="font-size: 0.8rem; color: var(--text-muted); opacity: 0.8; font-weight: normal;">(${group.items.length} Files)</span>
+                                </div>
                                 <div class="folder-contents">
                                     ${innerFilesHtml}
                                 </div>
@@ -922,7 +1112,6 @@
                     finalUrl = document.getElementById('new-topic-url').value;
                     if(!finalUrl) return alert("Please enter a URL.");
                 } else {
-                    // Pre-check if Supabase is alive before trying file logic
                     if (!supabaseClient) {
                         alert("File upload disabled: Your Supabase keys are incorrect or missing.");
                         return;
