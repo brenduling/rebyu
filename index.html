@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rebyu | Academic Hub</title>
+    
+    <link rel="manifest" id="dynamic-manifest">
+    <meta name="theme-color" content="#0a0e17">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap');
 
@@ -35,6 +41,15 @@
             margin: 0;
             padding: 0;
             font-family: 'Space Grotesk', sans-serif;
+            /* Security addition */
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Allow selection in inputs */
+        input, select, textarea {
+            user-select: text;
+            -webkit-user-select: text;
         }
 
         body {
@@ -283,15 +298,17 @@
             border-radius: 12px;
             margin-bottom: 2rem;
             display: none;
+            flex-direction: column; /* Updated for new layout */
+            gap: 1rem;
         }
 
         .admin-panel.visible {
             display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-wrap: wrap;
             animation: slideUp 0.3s ease;
         }
+
+        /* New class for file upload alignment */
+        .input-row { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; width: 100%; }
 
         input, select {
             background: var(--surface);
@@ -308,6 +325,12 @@
             border-color: var(--accent-cyan);
         }
 
+        /* Styling for the actual file input */
+        input[type="file"] {
+            padding: 0.5rem;
+            color: var(--text-main);
+        }
+
         .btn-primary {
             background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
             color: white;
@@ -317,11 +340,18 @@
             cursor: pointer;
             font-weight: bold;
             transition: opacity 0.2s;
+            white-space: nowrap;
         }
 
         .btn-primary:hover {
             opacity: 0.8;
         }
+
+        /* Disabled state for upload button */
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Loading indicator for file uploads */
+        #loading-indicator { display: none; color: var(--accent-cyan); font-weight: bold; margin-bottom: 1rem;}
 
         /* --- Login Modal --- */
         .modal-overlay {
@@ -408,26 +438,41 @@
         <div class="breadcrumb" id="breadcrumb"></div>
 
         <div id="admin-add-term" class="admin-panel">
-            <input type="text" id="new-term-name" placeholder="Enter Term/Session Name (e.g., 3rd Year - 1st Sem)">
-            <button class="btn-primary" onclick="app.addTerm()">+ Create Term</button>
+            <div class="input-row">
+                <input type="text" id="new-term-name" placeholder="Enter Term/Session Name (e.g., 3rd Year - 1st Sem)">
+                <button class="btn-primary" onclick="app.addTerm()">+ Create Term</button>
+            </div>
         </div>
 
         <div id="admin-add-course" class="admin-panel">
-            <input type="text" id="new-course-name" placeholder="Enter Course Title (e.g., Network Engineering)">
-            <button class="btn-primary" onclick="app.addCourse()">+ Add Course</button>
+            <div class="input-row">
+                <input type="text" id="new-course-name" placeholder="Enter Course Title (e.g., Network Engineering)">
+                <button class="btn-primary" onclick="app.addCourse()">+ Add Course</button>
+            </div>
         </div>
 
         <div id="admin-add-topic" class="admin-panel">
-            <input type="text" id="new-topic-title" placeholder="Topic Title">
-            <select id="new-topic-type">
-                <option value="doc">Document (.docx)</option>
-                <option value="sheet">Spreadsheet (.xlsx)</option>
-                <option value="slide">Presentation (.pptx)</option>
-                <option value="link">External Link</option>
-            </select>
-            <input type="text" id="new-topic-url" placeholder="File URL">
-            <input type="text" id="new-topic-tags" placeholder="Tags (comma separated, e.g., Midterm, Prefinal)">
-            <button class="btn-primary" onclick="app.addTopic()">+ Upload Topic</button>
+            <div class="input-row">
+                <input type="text" id="new-topic-title" placeholder="Topic Title">
+                <select id="new-topic-type">
+                    <option value="doc">Document (.docx)</option>
+                    <option value="sheet">Spreadsheet (.xlsx)</option>
+                    <option value="slide">Presentation (.pptx)</option>
+                    <option value="link">External Link</option>
+                </select>
+                <input type="text" id="new-topic-tags" placeholder="Tags (comma separated, e.g., Midterm, Prefinal)">
+            </div>
+            
+            <div class="input-row">
+                <select id="input-method" onchange="app.toggleUploadMethod()" style="flex: 0.5">
+                    <option value="url">Provide URL / Link</option>
+                    <option value="file">Upload File to Supabase</option>
+                </select>
+                <input type="text" id="new-topic-url" placeholder="Enter link URL...">
+                <input type="file" id="new-topic-file" style="display: none;">
+                <button class="btn-primary" id="upload-btn" onclick="app.addTopic()">+ Add Topic</button>
+            </div>
+            <div id="loading-indicator">Uploading File... Please Wait.</div>
         </div>
 
         <div id="view-terms" class="view-section active">
@@ -458,24 +503,115 @@
     </footer>
 
     <script>
+        // ==========================================
+        // 1. DYNAMIC MANIFEST & PWA
+        // ==========================================
+        const manifestData = {
+            "name": "Rebyu Academic Hub", "short_name": "Rebyu", "start_url": ".", "display": "standalone",
+            "background_color": "#0a0e17", "theme_color": "#0a0e17",
+            "icons": [{"src": "data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='gC' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2306b6d4'/%3E%3Cstop offset='100%25' stop-color='%233b82f6'/%3E%3C/linearGradient%3E%3ClinearGradient id='gP' x1='0%25' y1='100%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23a855f7'/%3E%3Cstop offset='100%25' stop-color='%23f43f5e'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M 12 70 C 25 70 40 55 50 75 C 60 55 75 70 88 70 L 88 35 C 75 35 60 20 50 40 C 40 20 25 35 12 35 Z' fill='none' stroke='url(%23gC)' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cline x1='50' y1='40' x2='50' y2='75' stroke='url(%23gC)' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M 25 55 L 45 35 L 60 50 L 90 15' fill='none' stroke='url(%23gP)' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M 70 15 L 90 15 L 90 35' fill='none' stroke='url(%23gP)' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='25' cy='55' r='5' fill='%23a855f7' /%3E%3C/svg%3E", "sizes": "512x512", "type": "image/svg+xml"}]
+        };
+        document.getElementById('dynamic-manifest').href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifestData));
+
+        // ==========================================
+        // 2. SECURITY & ANTI-INSPECT MEASURES
+        // ==========================================
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.keyCode === 123) e.preventDefault(); // Block F12
+            if (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) e.preventDefault(); // Block Inspect
+            if (e.ctrlKey && e.key.toUpperCase() === 'U') e.preventDefault(); // Block View Source
+        });
+
+        // ==========================================
+        // 3. SUPABASE CRASH-PROOF INITIALIZATION
+        // ==========================================
+        let supabaseClient = null;
+        try {
+            const SUPABASE_URL = 'https://fokvelqwqxmlkphxqqrp.supabase.co'; 
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZva3ZlbHF3cXhtbGtwaHhxcXJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1NzI2MjgsImV4cCI6MjA4OTE0ODYyOH0.vHOJ2qMZC13NDf-4GBwpAcRn6n8Xq6mEVazw0fR2uWU';
+            // Only instantiate if the object exists to prevent immediate crashes
+            if (window.supabase) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            }
+        } catch (error) {
+            console.warn("Supabase configuration failed. Check your API keys. Falling back to Local Storage.");
+        }
+
+        // ==========================================
+        // 4. MAIN APP LOGIC
+        // ==========================================
         const app = {
             mode: 'student', 
             theme: 'dark',
-            data: [], // Starts with no values as requested
+            data: [], 
             currentLevel: 'home',
             activeTermId: null,
             activeCourseId: null,
 
-            init() {
+            async init() {
+                await this.loadData();
                 this.renderBreadcrumb();
                 this.renderTerms();
                 this.updateUI();
             },
 
+            // --- Crash-Proof Database Sync Functions ---
+            async loadData() {
+                let loadedFromSupabase = false;
+
+                // Try Supabase First
+                if (supabaseClient) {
+                    try {
+                        const { data, error } = await supabaseClient.from('rebyu_data').select('state').eq('id', 1).single();
+                        if (data && data.state) {
+                            this.data = data.state;
+                            loadedFromSupabase = true;
+                        }
+                    } catch(e) { 
+                        console.warn("Supabase database fetch failed. Ensure your 'rebyu_data' table exists."); 
+                    }
+                }
+
+                // Fallback to LocalStorage if Supabase is offline/broken
+                if (!loadedFromSupabase) {
+                    const storedData = localStorage.getItem('rebyu_data');
+                    if (storedData) {
+                        this.data = JSON.parse(storedData);
+                    }
+                }
+            },
+
+            async saveData() {
+                // ALWAYS save to LocalStorage as a backup safety net
+                localStorage.setItem('rebyu_data', JSON.stringify(this.data));
+
+                // Save to Supabase if available
+                if (supabaseClient) {
+                    try {
+                        await supabaseClient.from('rebyu_data').update({ state: this.data }).eq('id', 1);
+                    } catch(e) { 
+                        console.warn("Supabase update failed."); 
+                    }
+                }
+            },
+
+            // --- UI Interaction Functions ---
             toggleTheme() {
                 this.theme = this.theme === 'dark' ? 'light' : 'dark';
                 document.body.classList.toggle('light-theme');
                 document.getElementById('theme-icon').textContent = this.theme === 'dark' ? '☀️' : '🌙';
+            },
+
+            toggleUploadMethod() {
+                const method = document.getElementById('input-method').value;
+                if (method === 'url') {
+                    document.getElementById('new-topic-url').style.display = 'block';
+                    document.getElementById('new-topic-file').style.display = 'none';
+                } else {
+                    document.getElementById('new-topic-url').style.display = 'none';
+                    document.getElementById('new-topic-file').style.display = 'block';
+                }
             },
 
             requestModeToggle() {
@@ -493,25 +629,22 @@
             },
 
             login() {
-                const user = document.getElementById('auth-user').value;
-                const pass = document.getElementById('auth-pass').value;
-                if (user === 'brenduling' && pass === 'brenduling') {
-                    this.closeModal();
+                if (document.getElementById('auth-user').value === 'brenduling' && document.getElementById('auth-pass').value === 'brenduling') {
+                    this.closeModal(); 
                     this.setMode('admin');
-                } else {
-                    alert("Invalid credentials.");
+                } else { 
+                    alert("Invalid credentials."); 
                 }
             },
 
             setMode(newMode) {
                 this.mode = newMode;
                 const btn = document.getElementById('mode-btn');
-                
                 if (this.mode === 'admin') {
-                    btn.innerHTML = `<span>⚙️</span> Admin Mode`;
+                    btn.innerHTML = `<span>⚙️</span> Admin Mode`; 
                     btn.style.borderColor = "var(--accent-purple)";
                 } else {
-                    btn.innerHTML = `<span>🎓</span> Student Mode`;
+                    btn.innerHTML = `<span>🎓</span> Student Mode`; 
                     btn.style.borderColor = "var(--border)";
                 }
                 this.updateUI();
@@ -519,28 +652,18 @@
 
             navigate(level, id = null) {
                 document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-
                 setTimeout(() => {
                     if (level === 'home') {
-                        this.currentLevel = 'home';
-                        this.activeTermId = null;
-                        this.activeCourseId = null;
-                        this.renderTerms();
-                        document.getElementById('view-terms').classList.add('active');
+                        this.currentLevel = 'home'; this.activeTermId = null; this.activeCourseId = null;
+                        this.renderTerms(); document.getElementById('view-terms').classList.add('active');
                     } else if (level === 'term') {
-                        this.currentLevel = 'term';
-                        this.activeTermId = id;
-                        this.activeCourseId = null;
-                        this.renderCourses();
-                        document.getElementById('view-courses').classList.add('active');
+                        this.currentLevel = 'term'; this.activeTermId = id; this.activeCourseId = null;
+                        this.renderCourses(); document.getElementById('view-courses').classList.add('active');
                     } else if (level === 'course') {
-                        this.currentLevel = 'course';
-                        this.activeCourseId = id;
-                        this.renderTopics();
-                        document.getElementById('view-topics').classList.add('active');
+                        this.currentLevel = 'course'; this.activeCourseId = id;
+                        this.renderTopics(); document.getElementById('view-topics').classList.add('active');
                     }
-                    this.renderBreadcrumb();
-                    this.updateUI();
+                    this.renderBreadcrumb(); this.updateUI();
                 }, 50);
             },
 
@@ -559,7 +682,6 @@
             renderBreadcrumb() {
                 const bc = document.getElementById('breadcrumb');
                 let html = `<span onclick="app.navigate('home')">🏠 Home</span>`;
-                
                 if (this.activeTermId) {
                     const term = this.data.find(t => t.id === this.activeTermId);
                     if(term) html += ` / <span onclick="app.navigate('term', '${term.id}')">${term.name}</span>`;
@@ -578,12 +700,7 @@
                     container.innerHTML = `<p style="color: var(--text-muted)">No terms or sessions available yet.</p>`;
                     return;
                 }
-                container.innerHTML = this.data.map(term => `
-                    <div class="card" onclick="app.navigate('term', '${term.id}')">
-                        <h3>${term.name}</h3>
-                        <p>${term.courses.length} Courses</p>
-                    </div>
-                `).join('');
+                container.innerHTML = this.data.map(term => `<div class="card" onclick="app.navigate('term', '${term.id}')"><h3>${term.name}</h3><p>${term.courses.length} Courses</p></div>`).join('');
             },
 
             renderCourses() {
@@ -593,98 +710,120 @@
                     container.innerHTML = `<p style="color: var(--text-muted)">No courses available for this term yet.</p>`;
                     return;
                 }
-                container.innerHTML = term.courses.map(course => `
-                    <div class="card" onclick="app.navigate('course', '${course.id}')">
-                        <h3>${course.name}</h3>
-                        <p>${course.topics.length} Materials Uploaded</p>
-                    </div>
-                `).join('');
+                container.innerHTML = term.courses.map(course => `<div class="card" onclick="app.navigate('course', '${course.id}')"><h3>${course.name}</h3><p>${course.topics.length} Materials Uploaded</p></div>`).join('');
             },
 
             renderTopics() {
                 const term = this.data.find(t => t.id === this.activeTermId);
                 const course = term.courses.find(c => c.id === this.activeCourseId);
                 const container = document.getElementById('topics-list');
-                
                 if (!course || course.topics.length === 0) {
                     container.innerHTML = `<p style="color: var(--text-muted)">No topics or files uploaded yet.</p>`;
                     return;
                 }
 
                 container.innerHTML = course.topics.map(topic => {
-                    let iconCls = '', iconTxt = '', actionTxt = 'Download';
+                    let iconCls = '', iconTxt = '';
                     switch(topic.type) {
                         case 'doc': iconCls = 'icon-doc'; iconTxt = 'DOC'; break;
                         case 'sheet': iconCls = 'icon-sheet'; iconTxt = 'XLS'; break;
                         case 'slide': iconCls = 'icon-slide'; iconTxt = 'PPT'; break;
-                        case 'link': iconCls = 'icon-link'; iconTxt = '🔗'; actionTxt = 'Visit Link'; break;
+                        case 'link': iconCls = 'icon-link'; iconTxt = '🔗'; break; 
                     }
 
+                    const actionTxt = topic.sourceMethod === 'file' ? 'Download' : 'View';
                     const tagsHtml = topic.tags.map(tag => `<span class="chip">${tag}</span>`).join('');
-
-                    return `
-                        <div class="topic-item">
-                            <div class="topic-info">
-                                <div class="icon-badge ${iconCls}">${iconTxt}</div>
-                                <div>
-                                    <h3>${topic.title}</h3>
-                                    <div class="tags-container">${tagsHtml}</div>
-                                </div>
-                            </div>
-                            <a href="${topic.url}" target="_blank" class="btn-action">${actionTxt}</a>
-                        </div>
-                    `;
+                    return `<div class="topic-item"><div class="topic-info"><div class="icon-badge ${iconCls}">${iconTxt}</div><div><h3>${topic.title}</h3><div class="tags-container">${tagsHtml}</div></div></div><a href="${topic.url}" target="_blank" class="btn-action">${actionTxt}</a></div>`;
                 }).join('');
             },
 
             generateId() { return '_' + Math.random().toString(36).substr(2, 9); },
 
-            addTerm() {
+            async addTerm() {
                 const input = document.getElementById('new-term-name');
                 if(!input.value) return alert("Please enter a term name.");
-                this.data.push({ id: this.generateId(), name: input.value, courses: [] });
+                this.data.push({ id: this.generateId(), name: input.value, courses: [] }); 
                 input.value = '';
+                await this.saveData(); 
                 this.renderTerms();
             },
 
-            addCourse() {
+            async addCourse() {
                 const input = document.getElementById('new-course-name');
                 if(!input.value) return alert("Please enter a course title.");
                 const term = this.data.find(t => t.id === this.activeTermId);
-                term.courses.push({ id: this.generateId(), name: input.value, topics: [] });
+                term.courses.push({ id: this.generateId(), name: input.value, topics: [] }); 
                 input.value = '';
+                await this.saveData(); 
                 this.renderCourses();
             },
 
-            addTopic() {
-                const title = document.getElementById('new-topic-title');
-                const type = document.getElementById('new-topic-type');
-                const url = document.getElementById('new-topic-url');
-                const tagsInput = document.getElementById('new-topic-tags');
+            async addTopic() {
+                const title = document.getElementById('new-topic-title').value;
+                const type = document.getElementById('new-topic-type').value;
+                const method = document.getElementById('input-method').value;
+                const tagsInput = document.getElementById('new-topic-tags').value;
                 
-                if(!title.value || !url.value) return alert("Please fill out both the title and the file/link URL.");
-                
-                // Process tags: split by comma, trim whitespace, remove empties
-                const tagsArray = tagsInput.value.split(',').map(t => t.trim()).filter(t => t.length > 0);
-                
+                if(!title) return alert("Please provide a Title.");
+
+                let finalUrl = '';
+                const btn = document.getElementById('upload-btn');
+                const loading = document.getElementById('loading-indicator');
+
+                if (method === 'url') {
+                    finalUrl = document.getElementById('new-topic-url').value;
+                    if(!finalUrl) return alert("Please enter a URL.");
+                } else {
+                    // Pre-check if Supabase is alive before trying file logic
+                    if (!supabaseClient) {
+                        alert("File upload disabled: Your Supabase keys are incorrect or missing.");
+                        return;
+                    }
+
+                    const fileInput = document.getElementById('new-topic-file');
+                    const file = fileInput.files[0];
+                    if(!file) return alert("Please select a file to upload.");
+
+                    btn.disabled = true;
+                    loading.style.display = 'block';
+
+                    try {
+                        const fileExt = file.name.split('.').pop();
+                        const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+                        
+                        const { data, error } = await supabaseClient.storage.from('rebyu-files').upload(fileName, file);
+                        if (error) throw error;
+
+                        const { data: publicUrlData } = supabaseClient.storage.from('rebyu-files').getPublicUrl(fileName);
+                        finalUrl = publicUrlData.publicUrl;
+                    } catch(err) {
+                        alert("File upload failed. Ensure your Supabase 'rebyu-files' bucket is set to Public.");
+                        btn.disabled = false;
+                        loading.style.display = 'none';
+                        return;
+                    }
+                    
+                    btn.disabled = false;
+                    loading.style.display = 'none';
+                    fileInput.value = '';
+                }
+
+                const tagsArray = tagsInput.split(',').map(t => t.trim()).filter(t => t.length > 0);
                 const term = this.data.find(t => t.id === this.activeTermId);
                 const course = term.courses.find(c => c.id === this.activeCourseId);
                 
-                course.topics.push({
-                    id: this.generateId(),
-                    title: title.value,
-                    type: type.value,
-                    url: url.value,
-                    tags: tagsArray
-                });
+                course.topics.push({ id: this.generateId(), title: title, type: type, url: finalUrl, tags: tagsArray, sourceMethod: method });
                 
-                title.value = '';
-                url.value = '';
-                tagsInput.value = '';
+                document.getElementById('new-topic-title').value = '';
+                document.getElementById('new-topic-url').value = '';
+                document.getElementById('new-topic-tags').value = '';
+                
+                await this.saveData();
                 this.renderTopics();
             }
         };
 
+        // Boot the app
         window.onload = () => app.init();
     </script>
 </body>
