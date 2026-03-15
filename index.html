@@ -139,14 +139,8 @@
             padding: 0 1.5rem;
         }
 
-        .header-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
         .breadcrumb {
+            margin-bottom: 2rem;
             color: var(--text-muted);
             font-size: 0.9rem;
             display: flex;
@@ -159,23 +153,6 @@
         }
 
         .breadcrumb span:hover {
-            color: var(--accent-cyan);
-        }
-
-        .btn-back {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            background: var(--surface);
-            color: var(--text-main);
-            border: 1px solid var(--border);
-            transition: all 0.2s;
-            display: none; /* hidden by default */
-        }
-
-        .btn-back:hover {
-            border-color: var(--accent-cyan);
             color: var(--accent-cyan);
         }
 
@@ -548,27 +525,6 @@
             font-size: 0.9rem;
         }
 
-        /* Live Toast Notification */
-        #live-toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--accent-cyan);
-            color: #000;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 9999;
-        }
-        #live-toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
         footer {
             text-align: center;
             padding: 2rem;
@@ -613,10 +569,7 @@
     </header>
 
     <main>
-        <div class="header-actions">
-            <div class="breadcrumb" id="breadcrumb"></div>
-            <button id="back-btn" class="btn-back" onclick="app.goBack()">⬅ Back</button>
-        </div>
+        <div class="breadcrumb" id="breadcrumb"></div>
 
         <div id="admin-add-term" class="admin-panel">
             <div class="input-row">
@@ -679,8 +632,6 @@
             <div id="topics-list"></div>
         </div>
     </main>
-
-    <div id="live-toast">🔄 System Updated Live!</div>
 
     <div class="modal-overlay" id="auth-modal">
         <div class="modal-content">
@@ -766,38 +717,22 @@
         // ==========================================
         // 2. SECURITY & ANTI-INSPECT MEASURES
         // ==========================================
-        document.addEventListener('contextmenu', e => e.preventDefault()); // Block Right Click
-        document.onselectstart = function() { return false; }; // Prevent Highlighting
-        
+        document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
             if (e.keyCode === 123) e.preventDefault(); // Block F12
             if (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) e.preventDefault(); // Block Inspect
             if (e.ctrlKey && e.key.toUpperCase() === 'U') e.preventDefault(); // Block View Source
         });
 
-        // Aggressive Debugger trap
-        setInterval(() => {
-            console.clear();
-            console.log("%cStop!", "color: red; font-size: 50px; font-weight: bold;");
-            const before = new Date().getTime();
-            debugger;
-            const after = new Date().getTime();
-            if (after - before > 100) {
-                document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:20%; font-family:sans-serif;'>Unauthorized Access Detected</h1>";
-            }
-        }, 1000);
-
         // ==========================================
         // 3. SUPABASE CRASH-PROOF INITIALIZATION
         // ==========================================
         let supabaseClient = null;
         try {
-            // Base64 Obfuscated Supabase Connection
-            const _0xU = atob('aHR0cHM6Ly9mb2t2ZWxxd3F4bWxrcGh4cXFycC5zdXBhYmFzZS5jbw==');
-            const _0xK = atob('ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW1admEzWmxiSEYzY3hoZGJXdHdhSGh4Y1hGeWNDSXNJbkp2YkdVaU9pSmhibTl1SWl3aWFXRjBJam94Tnpjek5UY3lOakk0TENKbGVIQWlPakl3T0RreE5EZzJNamg5LnZIT0oycU1aQzEzTkRmLTRHQndwQWNSbjZuOFhxNm1FVmF6dzBmUjJ1V1U=');
-            
+            const SUPABASE_URL = 'https://fokvelqwqxmlkphxqqrp.supabase.co'; 
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZva3ZlbHF3cXhtbGtwaHhxcXJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1NzI2MjgsImV4cCI6MjA4OTE0ODYyOH0.vHOJ2qMZC13NDf-4GBwpAcRn6n8Xq6mEVazw0fR2uWU';
             if (window.supabase) {
-                supabaseClient = window.supabase.createClient(_0xU, _0xK);
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             }
         } catch (error) {
             console.warn("Supabase configuration failed. Check your API keys. Falling back to Local Storage.");
@@ -863,6 +798,7 @@
             },
 
             // --- REALTIME LISTENER ---
+            // Triggers automatically whenever Supabase sees a change to the database
             subscribeToChanges() {
                 if (!supabaseClient) return;
 
@@ -870,19 +806,15 @@
                     .channel('public:rebyu_data')
                     .on('postgres_changes', { event: '*', schema: 'public', table: 'rebyu_data' }, payload => {
                         if (payload.new && payload.new.state) {
+                            // Update local data with the new live data
                             this.data = payload.new.state;
                             
-                            // Re-render current view seamlessly
+                            // Re-render only the current view to make it seamless
                             if (this.currentLevel === 'home') this.renderTerms();
                             else if (this.currentLevel === 'term') this.renderCourses();
                             else if (this.currentLevel === 'course') this.renderTopics();
                             
                             this.renderBreadcrumb();
-
-                            // Show Live Sync Notification Toast
-                            const toast = document.getElementById('live-toast');
-                            toast.classList.add('show');
-                            setTimeout(() => toast.classList.remove('show'), 3000);
                         }
                     })
                     .subscribe();
@@ -941,13 +873,7 @@
             },
 
             login() {
-                const u = document.getElementById('auth-user').value;
-                const p = document.getElementById('auth-pass').value;
-
-                // Obfuscated credential check for "brenduling" and "brenduling231524"
-                const _hash = (str) => btoa(str).split('').reverse().join('');
-
-                if (_hash(u) === "==wZul1RmbJlYn" && _hash(p) === "==ANyUTMzIzZul1RmbJlYn") {
+                if (document.getElementById('auth-user').value === 'brenduling' && document.getElementById('auth-pass').value === 'brenduling') {
                     this.closeModal('auth-modal'); 
                     this.setMode('admin');
                 } else { 
@@ -967,6 +893,7 @@
                 }
                 this.updateUI();
                 
+                // Re-render current view to ensure edit/delete buttons toggle
                 if (this.currentLevel === 'term') this.renderCourses();
                 if (this.currentLevel === 'course') this.renderTopics();
             },
@@ -987,14 +914,6 @@
                     }
                     this.renderBreadcrumb(); this.updateUI();
                 }, 50);
-            },
-
-            goBack() {
-                if (this.currentLevel === 'course') {
-                    this.navigate('term', this.activeTermId);
-                } else if (this.currentLevel === 'term') {
-                    this.navigate('home');
-                }
             },
 
             updateUI() {
@@ -1022,14 +941,6 @@
                     if(course) html += ` / <span>${course.name}</span>`;
                 }
                 bc.innerHTML = html;
-
-                // Toggle Back Button logic
-                const backBtn = document.getElementById('back-btn');
-                if (this.currentLevel === 'home') {
-                    backBtn.style.display = 'none';
-                } else {
-                    backBtn.style.display = 'block';
-                }
             },
 
             renderTerms() {
@@ -1055,6 +966,7 @@
                         ? `<p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">👨‍🏫 ${course.instructor}</p>` 
                         : '';
                     
+                    // Admin Action Buttons
                     let adminActions = '';
                     if (this.mode === 'admin') {
                         adminActions = `
@@ -1133,17 +1045,8 @@
                     case 'link': iconCls = 'icon-link'; iconTxt = '🔗'; break; 
                 }
 
-                let finalUrl = topic.url;
-                
-                if (topic.type === 'doc' || topic.type === 'sheet' || topic.type === 'slide') {
-                    finalUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(topic.url)}`;
-                } else if (topic.sourceMethod === 'file') {
-                    if(finalUrl.includes('supabase.co')) {
-                        finalUrl = finalUrl + "?download=";
-                    }
-                }
-
-                const actionTxt = (topic.sourceMethod === 'file' && topic.type !== 'image' && topic.type !== 'doc' && topic.type !== 'sheet' && topic.type !== 'slide') ? 'Download' : 'View';
+                // If it's a file, we want them to just view it in a new tab without forced download
+                const actionTxt = 'View';
                 
                 const tagsHtml = (topic.tags || []).map(tag => `<span class="chip">${tag}</span>`).join('');
                 
@@ -1181,7 +1084,7 @@
                         </div>
                         <div style="display: flex; gap: 0.5rem; align-items: center;">
                             ${adminBtns}
-                            <a href="${finalUrl}" target="_blank" class="btn-action">${actionTxt}</a>
+                            <a href="${topic.url}" target="_blank" class="btn-action">${actionTxt}</a>
                         </div>
                     </div>
                 `;
@@ -1448,12 +1351,7 @@
 
             async confirmDelete() {
                 const password = document.getElementById('delete-auth-pass').value;
-                
-                // Obfuscated credential check
-                const check = (str) => Array.from(str).map(c => c.charCodeAt(0)).join('-');
-                const secret = "98-114-101-110-100-117-108-105-110-103";
-
-                if (check(password) !== secret) {
+                if (password !== 'brenduling') {
                     return alert("Incorrect Password. Deletion cancelled.");
                 }
 
