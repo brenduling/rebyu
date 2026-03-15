@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rebyu | Academic Hub</title>
-    
-    <link rel="manifest" id="dynamic-manifest">
-    <meta name="theme-color" content="#0a0e17">
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap');
 
@@ -39,15 +35,6 @@
             margin: 0;
             padding: 0;
             font-family: 'Space Grotesk', sans-serif;
-            /* Security: Disable text selection */
-            user-select: none;
-            -webkit-user-select: none;
-        }
-
-        /* Allow selection only in input fields */
-        input, select, textarea {
-            user-select: text;
-            -webkit-user-select: text;
         }
 
         body {
@@ -91,7 +78,9 @@
             transition: transform 0.3s ease;
         }
 
-        .logo-container:hover .logo-svg { transform: scale(1.05); }
+        .logo-container:hover .logo-svg {
+            transform: scale(1.05);
+        }
 
         .logo-text {
             font-size: 1.8rem;
@@ -102,7 +91,10 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .nav-controls { display: flex; gap: 1rem; }
+        .nav-controls {
+            display: flex;
+            gap: 1rem;
+        }
 
         .btn-toggle {
             display: flex;
@@ -140,15 +132,23 @@
             gap: 0.5rem;
         }
 
-        .breadcrumb span { cursor: pointer; transition: color 0.2s; }
-        .breadcrumb span:hover { color: var(--accent-cyan); }
+        .breadcrumb span {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb span:hover {
+            color: var(--accent-cyan);
+        }
 
         .view-section {
             display: none;
             animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        .view-section.active { display: block; }
+        .view-section.active {
+            display: block;
+        }
 
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(20px); }
@@ -189,7 +189,10 @@
             border-color: var(--accent-cyan);
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
-        .card:hover::before { transform: scaleY(1); }
+
+        .card:hover::before {
+            transform: scaleY(1);
+        }
 
         /* --- Topics & Tags --- */
         .topic-item {
@@ -206,13 +209,25 @@
             gap: 1rem;
         }
 
-        .topic-item:hover { border-color: var(--accent-purple); background: var(--surface-hover); }
-        .topic-info { display: flex; align-items: center; gap: 1rem; flex: 1; }
+        .topic-item:hover {
+            border-color: var(--accent-purple);
+            background: var(--surface-hover);
+        }
+
+        .topic-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
 
         .icon-badge {
-            width: 35px; height: 35px; border-radius: 8px;
+            width: 35px; height: 35px;
+            border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 0.8rem; flex-shrink: 0;
+            font-weight: bold;
+            font-size: 0.8rem;
+            flex-shrink: 0;
         }
 
         .icon-doc { background: rgba(37, 99, 235, 0.2); color: #2563eb; }
@@ -225,65 +240,134 @@
         body:not(.light-theme) .icon-slide { color: #f87171; }
         body:not(.light-theme) .icon-link { color: #c084fc; }
 
-        .tags-container { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+        .tags-container {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
         .chip {
-            background: rgba(168, 85, 247, 0.15); color: var(--accent-purple);
-            border: 1px solid rgba(168, 85, 247, 0.4); padding: 0.2rem 0.6rem;
-            border-radius: 12px; font-size: 0.75rem; font-weight: 600;
+            background: rgba(168, 85, 247, 0.15);
+            color: var(--accent-purple);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
 
         .btn-action {
-            padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600;
-            background: rgba(6, 182, 212, 0.1); color: var(--accent-cyan);
-            border: 1px solid rgba(6, 182, 212, 0.3); text-decoration: none;
-            transition: all 0.2s; white-space: nowrap;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
         }
-        .btn-action:hover { background: var(--accent-cyan); color: #fff; }
+
+        .btn-action:hover {
+            background: var(--accent-cyan);
+            color: #fff;
+        }
 
         /* --- Admin Controls --- */
         .admin-panel {
-            background: rgba(168, 85, 247, 0.05); border: 1px dashed var(--accent-purple);
-            padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; display: none;
+            background: rgba(168, 85, 247, 0.05);
+            border: 1px dashed var(--accent-purple);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            display: none;
         }
-        .admin-panel.visible { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; animation: slideUp 0.3s ease; }
+
+        .admin-panel.visible {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+            animation: slideUp 0.3s ease;
+        }
 
         input, select {
-            background: var(--surface); border: 1px solid var(--border);
-            color: var(--text-main); padding: 0.75rem 1rem; border-radius: 6px;
-            outline: none; flex: 1; min-width: 200px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            outline: none;
+            flex: 1;
+            min-width: 200px;
         }
-        input:focus, select:focus { border-color: var(--accent-cyan); }
+
+        input:focus, select:focus {
+            border-color: var(--accent-cyan);
+        }
 
         .btn-primary {
             background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
-            color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px;
-            cursor: pointer; font-weight: bold; transition: opacity 0.2s;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.2s;
         }
-        .btn-primary:hover { opacity: 0.8; }
+
+        .btn-primary:hover {
+            opacity: 0.8;
+        }
 
         /* --- Login Modal --- */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); display: none;
-            justify-content: center; align-items: center; z-index: 1000;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
+
         .modal-overlay.active { display: flex; }
 
         .modal-content {
-            background: var(--modal-bg); border: 1px solid var(--border); padding: 2rem;
-            border-radius: 12px; width: 90%; max-width: 400px; text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3); animation: slideUp 0.3s ease;
+            background: var(--modal-bg);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
         }
 
         .modal-content h2 { margin-bottom: 1.5rem; color: var(--accent-cyan); }
         .modal-content input { margin-bottom: 1rem; width: 100%; }
         .modal-content .btn-primary { width: 100%; margin-top: 1rem; }
-        .close-modal { margin-top: 1rem; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; }
+        
+        .close-modal {
+            margin-top: 1rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
 
         /* --- Footer --- */
         footer {
-            text-align: center; padding: 2rem; color: var(--text-muted);
-            font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: auto;
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
         }
     </style>
 </head>
@@ -311,8 +395,12 @@
             <span class="logo-text">REBYU</span>
         </div>
         <div class="nav-controls">
-            <button class="btn-toggle" onclick="app.toggleTheme()"><span id="theme-icon">☀️</span></button>
-            <button class="btn-toggle" onclick="app.requestModeToggle()" id="mode-btn"><span>🎓</span> Student Mode</button>
+            <button class="btn-toggle" onclick="app.toggleTheme()">
+                <span id="theme-icon">☀️</span>
+            </button>
+            <button class="btn-toggle" onclick="app.requestModeToggle()" id="mode-btn">
+                <span>🎓</span> Student Mode
+            </button>
         </div>
     </header>
 
@@ -342,9 +430,17 @@
             <button class="btn-primary" onclick="app.addTopic()">+ Upload Topic</button>
         </div>
 
-        <div id="view-terms" class="view-section active"><div class="grid-list" id="terms-list"></div></div>
-        <div id="view-courses" class="view-section"><div class="grid-list" id="courses-list"></div></div>
-        <div id="view-topics" class="view-section"><div id="topics-list"></div></div>
+        <div id="view-terms" class="view-section active">
+            <div class="grid-list" id="terms-list"></div>
+        </div>
+
+        <div id="view-courses" class="view-section">
+            <div class="grid-list" id="courses-list"></div>
+        </div>
+
+        <div id="view-topics" class="view-section">
+            <div id="topics-list"></div>
+        </div>
     </main>
 
     <div class="modal-overlay" id="auth-modal">
@@ -357,50 +453,15 @@
         </div>
     </div>
 
-    <footer>powered by brenduling</footer>
+    <footer>
+        powered by brenduling
+    </footer>
 
     <script>
-        // ==========================================
-        // 1. INLINE DYNAMIC PWA MANIFEST
-        // ==========================================
-        const manifestData = {
-            "name": "Rebyu Academic Hub",
-            "short_name": "Rebyu",
-            "start_url": ".",
-            "display": "standalone",
-            "background_color": "#0a0e17",
-            "theme_color": "#0a0e17",
-            "icons": [{
-                "src": "data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='gC' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2306b6d4'/%3E%3Cstop offset='100%25' stop-color='%233b82f6'/%3E%3C/linearGradient%3E%3ClinearGradient id='gP' x1='0%25' y1='100%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23a855f7'/%3E%3Cstop offset='100%25' stop-color='%23f43f5e'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M 12 70 C 25 70 40 55 50 75 C 60 55 75 70 88 70 L 88 35 C 75 35 60 20 50 40 C 40 20 25 35 12 35 Z' fill='none' stroke='url(%23gC)' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cline x1='50' y1='40' x2='50' y2='75' stroke='url(%23gC)' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M 25 55 L 45 35 L 60 50 L 90 15' fill='none' stroke='url(%23gP)' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M 70 15 L 90 15 L 90 35' fill='none' stroke='url(%23gP)' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='25' cy='55' r='5' fill='%23a855f7' /%3E%3C/svg%3E",
-                "sizes": "512x512",
-                "type": "image/svg+xml",
-                "purpose": "any maskable"
-            }]
-        };
-        const manifestString = JSON.stringify(manifestData);
-        document.getElementById('dynamic-manifest').href = 'data:application/json;charset=utf-8,' + encodeURIComponent(manifestString);
-
-        // ==========================================
-        // 2. SECURITY & ANTI-INSPECT MEASURES
-        // ==========================================
-        
-        // Disable Right-Click
-        document.addEventListener('contextmenu', event => event.preventDefault());
-
-        // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U
-        document.addEventListener('keydown', event => {
-            if (event.keyCode === 123) event.preventDefault(); // F12
-            if (event.ctrlKey && event.shiftKey && ['I', 'J', 'C'].includes(event.key.toUpperCase())) event.preventDefault(); // DevTools
-            if (event.ctrlKey && event.key.toUpperCase() === 'U') event.preventDefault(); // View Source
-        });
-
-        // ==========================================
-        // 3. APP LOGIC
-        // ==========================================
         const app = {
             mode: 'student', 
             theme: 'dark',
-            data: [], 
+            data: [], // Starts with no values as requested
             currentLevel: 'home',
             activeTermId: null,
             activeCourseId: null,
@@ -445,6 +506,7 @@
             setMode(newMode) {
                 this.mode = newMode;
                 const btn = document.getElementById('mode-btn');
+                
                 if (this.mode === 'admin') {
                     btn.innerHTML = `<span>⚙️</span> Admin Mode`;
                     btn.style.borderColor = "var(--accent-purple)";
@@ -457,18 +519,28 @@
 
             navigate(level, id = null) {
                 document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+
                 setTimeout(() => {
                     if (level === 'home') {
-                        this.currentLevel = 'home'; this.activeTermId = null; this.activeCourseId = null;
-                        this.renderTerms(); document.getElementById('view-terms').classList.add('active');
+                        this.currentLevel = 'home';
+                        this.activeTermId = null;
+                        this.activeCourseId = null;
+                        this.renderTerms();
+                        document.getElementById('view-terms').classList.add('active');
                     } else if (level === 'term') {
-                        this.currentLevel = 'term'; this.activeTermId = id; this.activeCourseId = null;
-                        this.renderCourses(); document.getElementById('view-courses').classList.add('active');
+                        this.currentLevel = 'term';
+                        this.activeTermId = id;
+                        this.activeCourseId = null;
+                        this.renderCourses();
+                        document.getElementById('view-courses').classList.add('active');
                     } else if (level === 'course') {
-                        this.currentLevel = 'course'; this.activeCourseId = id;
-                        this.renderTopics(); document.getElementById('view-topics').classList.add('active');
+                        this.currentLevel = 'course';
+                        this.activeCourseId = id;
+                        this.renderTopics();
+                        document.getElementById('view-topics').classList.add('active');
                     }
-                    this.renderBreadcrumb(); this.updateUI();
+                    this.renderBreadcrumb();
+                    this.updateUI();
                 }, 50);
             },
 
@@ -487,6 +559,7 @@
             renderBreadcrumb() {
                 const bc = document.getElementById('breadcrumb');
                 let html = `<span onclick="app.navigate('home')">🏠 Home</span>`;
+                
                 if (this.activeTermId) {
                     const term = this.data.find(t => t.id === this.activeTermId);
                     if(term) html += ` / <span onclick="app.navigate('term', '${term.id}')">${term.name}</span>`;
@@ -501,22 +574,42 @@
 
             renderTerms() {
                 const container = document.getElementById('terms-list');
-                if (this.data.length === 0) return container.innerHTML = `<p style="color: var(--text-muted)">No terms or sessions available yet.</p>`;
-                container.innerHTML = this.data.map(term => `<div class="card" onclick="app.navigate('term', '${term.id}')"><h3>${term.name}</h3><p>${term.courses.length} Courses</p></div>`).join('');
+                if (this.data.length === 0) {
+                    container.innerHTML = `<p style="color: var(--text-muted)">No terms or sessions available yet.</p>`;
+                    return;
+                }
+                container.innerHTML = this.data.map(term => `
+                    <div class="card" onclick="app.navigate('term', '${term.id}')">
+                        <h3>${term.name}</h3>
+                        <p>${term.courses.length} Courses</p>
+                    </div>
+                `).join('');
             },
 
             renderCourses() {
                 const term = this.data.find(t => t.id === this.activeTermId);
                 const container = document.getElementById('courses-list');
-                if (!term || term.courses.length === 0) return container.innerHTML = `<p style="color: var(--text-muted)">No courses available for this term yet.</p>`;
-                container.innerHTML = term.courses.map(course => `<div class="card" onclick="app.navigate('course', '${course.id}')"><h3>${course.name}</h3><p>${course.topics.length} Materials Uploaded</p></div>`).join('');
+                if (!term || term.courses.length === 0) {
+                    container.innerHTML = `<p style="color: var(--text-muted)">No courses available for this term yet.</p>`;
+                    return;
+                }
+                container.innerHTML = term.courses.map(course => `
+                    <div class="card" onclick="app.navigate('course', '${course.id}')">
+                        <h3>${course.name}</h3>
+                        <p>${course.topics.length} Materials Uploaded</p>
+                    </div>
+                `).join('');
             },
 
             renderTopics() {
                 const term = this.data.find(t => t.id === this.activeTermId);
                 const course = term.courses.find(c => c.id === this.activeCourseId);
                 const container = document.getElementById('topics-list');
-                if (!course || course.topics.length === 0) return container.innerHTML = `<p style="color: var(--text-muted)">No topics or files uploaded yet.</p>`;
+                
+                if (!course || course.topics.length === 0) {
+                    container.innerHTML = `<p style="color: var(--text-muted)">No topics or files uploaded yet.</p>`;
+                    return;
+                }
 
                 container.innerHTML = course.topics.map(topic => {
                     let iconCls = '', iconTxt = '', actionTxt = 'Download';
@@ -526,8 +619,21 @@
                         case 'slide': iconCls = 'icon-slide'; iconTxt = 'PPT'; break;
                         case 'link': iconCls = 'icon-link'; iconTxt = '🔗'; actionTxt = 'Visit Link'; break;
                     }
+
                     const tagsHtml = topic.tags.map(tag => `<span class="chip">${tag}</span>`).join('');
-                    return `<div class="topic-item"><div class="topic-info"><div class="icon-badge ${iconCls}">${iconTxt}</div><div><h3>${topic.title}</h3><div class="tags-container">${tagsHtml}</div></div></div><a href="${topic.url}" target="_blank" class="btn-action">${actionTxt}</a></div>`;
+
+                    return `
+                        <div class="topic-item">
+                            <div class="topic-info">
+                                <div class="icon-badge ${iconCls}">${iconTxt}</div>
+                                <div>
+                                    <h3>${topic.title}</h3>
+                                    <div class="tags-container">${tagsHtml}</div>
+                                </div>
+                            </div>
+                            <a href="${topic.url}" target="_blank" class="btn-action">${actionTxt}</a>
+                        </div>
+                    `;
                 }).join('');
             },
 
@@ -536,25 +642,46 @@
             addTerm() {
                 const input = document.getElementById('new-term-name');
                 if(!input.value) return alert("Please enter a term name.");
-                this.data.push({ id: this.generateId(), name: input.value, courses: [] }); input.value = ''; this.renderTerms();
+                this.data.push({ id: this.generateId(), name: input.value, courses: [] });
+                input.value = '';
+                this.renderTerms();
             },
 
             addCourse() {
                 const input = document.getElementById('new-course-name');
                 if(!input.value) return alert("Please enter a course title.");
                 const term = this.data.find(t => t.id === this.activeTermId);
-                term.courses.push({ id: this.generateId(), name: input.value, topics: [] }); input.value = ''; this.renderCourses();
+                term.courses.push({ id: this.generateId(), name: input.value, topics: [] });
+                input.value = '';
+                this.renderCourses();
             },
 
             addTopic() {
-                const title = document.getElementById('new-topic-title'), type = document.getElementById('new-topic-type'), url = document.getElementById('new-topic-url'), tagsInput = document.getElementById('new-topic-tags');
+                const title = document.getElementById('new-topic-title');
+                const type = document.getElementById('new-topic-type');
+                const url = document.getElementById('new-topic-url');
+                const tagsInput = document.getElementById('new-topic-tags');
+                
                 if(!title.value || !url.value) return alert("Please fill out both the title and the file/link URL.");
+                
+                // Process tags: split by comma, trim whitespace, remove empties
                 const tagsArray = tagsInput.value.split(',').map(t => t.trim()).filter(t => t.length > 0);
+                
                 const term = this.data.find(t => t.id === this.activeTermId);
                 const course = term.courses.find(c => c.id === this.activeCourseId);
                 
-                course.topics.push({ id: this.generateId(), title: title.value, type: type.value, url: url.value, tags: tagsArray });
-                title.value = ''; url.value = ''; tagsInput.value = ''; this.renderTopics();
+                course.topics.push({
+                    id: this.generateId(),
+                    title: title.value,
+                    type: type.value,
+                    url: url.value,
+                    tags: tagsArray
+                });
+                
+                title.value = '';
+                url.value = '';
+                tagsInput.value = '';
+                this.renderTopics();
             }
         };
 
