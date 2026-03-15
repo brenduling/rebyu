@@ -724,6 +724,16 @@
             if (e.ctrlKey && e.key.toUpperCase() === 'U') e.preventDefault(); // Block View Source
         });
 
+        // Debugger trap: aggressively protects the source if DevTools is forced open
+        setInterval(() => {
+            const before = new Date().getTime();
+            debugger;
+            const after = new Date().getTime();
+            if (after - before > 100) {
+                document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:20%; font-family:sans-serif;'>Unauthorized Access Detected</h1>";
+            }
+        }, 1000);
+
         // ==========================================
         // 3. SUPABASE CRASH-PROOF INITIALIZATION
         // ==========================================
@@ -798,7 +808,6 @@
             },
 
             // --- REALTIME LISTENER ---
-            // Triggers automatically whenever Supabase sees a change to the database
             subscribeToChanges() {
                 if (!supabaseClient) return;
 
@@ -806,10 +815,8 @@
                     .channel('public:rebyu_data')
                     .on('postgres_changes', { event: '*', schema: 'public', table: 'rebyu_data' }, payload => {
                         if (payload.new && payload.new.state) {
-                            // Update local data with the new live data
                             this.data = payload.new.state;
                             
-                            // Re-render only the current view to make it seamless
                             if (this.currentLevel === 'home') this.renderTerms();
                             else if (this.currentLevel === 'term') this.renderCourses();
                             else if (this.currentLevel === 'course') this.renderTopics();
@@ -873,7 +880,14 @@
             },
 
             login() {
-                if (document.getElementById('auth-user').value === 'brenduling' && document.getElementById('auth-pass').value === 'brenduling') {
+                const u = document.getElementById('auth-user').value;
+                const p = document.getElementById('auth-pass').value;
+
+                // Obfuscated credential check for "brenduling"
+                const check = (str) => Array.from(str).map(c => c.charCodeAt(0)).join('-');
+                const secret = "98-114-101-110-100-117-108-105-110-103"; // Ascii codes for the password
+
+                if (check(u) === secret && check(p) === secret) {
                     this.closeModal('auth-modal'); 
                     this.setMode('admin');
                 } else { 
@@ -893,7 +907,6 @@
                 }
                 this.updateUI();
                 
-                // Re-render current view to ensure edit/delete buttons toggle
                 if (this.currentLevel === 'term') this.renderCourses();
                 if (this.currentLevel === 'course') this.renderTopics();
             },
@@ -966,7 +979,6 @@
                         ? `<p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">👨‍🏫 ${course.instructor}</p>` 
                         : '';
                     
-                    // Admin Action Buttons
                     let adminActions = '';
                     if (this.mode === 'admin') {
                         adminActions = `
@@ -1045,9 +1057,7 @@
                     case 'link': iconCls = 'icon-link'; iconTxt = '🔗'; break; 
                 }
 
-                // If it's a file, we want them to just view it in a new tab without forced download
-                const actionTxt = 'View';
-                
+                const actionTxt = topic.sourceMethod === 'file' ? 'Download' : 'View';
                 const tagsHtml = (topic.tags || []).map(tag => `<span class="chip">${tag}</span>`).join('');
                 
                 let adminBtns = '';
@@ -1351,7 +1361,12 @@
 
             async confirmDelete() {
                 const password = document.getElementById('delete-auth-pass').value;
-                if (password !== 'brenduling') {
+                
+                
+                const check = (str) => Array.from(str).map(c => c.charCodeAt(0)).join('-');
+                const secret = "98-114-101-110-100-117-108-105-110-103";
+
+                if (check(password) !== secret) {
                     return alert("Incorrect Password. Deletion cancelled.");
                 }
 
