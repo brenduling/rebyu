@@ -798,6 +798,7 @@
             },
 
             // --- REALTIME LISTENER ---
+            // Triggers automatically whenever Supabase sees a change to the database
             subscribeToChanges() {
                 if (!supabaseClient) return;
 
@@ -805,8 +806,10 @@
                     .channel('public:rebyu_data')
                     .on('postgres_changes', { event: '*', schema: 'public', table: 'rebyu_data' }, payload => {
                         if (payload.new && payload.new.state) {
+                            // Update local data with the new live data
                             this.data = payload.new.state;
                             
+                            // Re-render only the current view to make it seamless
                             if (this.currentLevel === 'home') this.renderTerms();
                             else if (this.currentLevel === 'term') this.renderCourses();
                             else if (this.currentLevel === 'course') this.renderTopics();
@@ -890,6 +893,7 @@
                 }
                 this.updateUI();
                 
+                // Re-render current view to ensure edit/delete buttons toggle
                 if (this.currentLevel === 'term') this.renderCourses();
                 if (this.currentLevel === 'course') this.renderTopics();
             },
@@ -962,6 +966,7 @@
                         ? `<p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">👨‍🏫 ${course.instructor}</p>` 
                         : '';
                     
+                    // Admin Action Buttons
                     let adminActions = '';
                     if (this.mode === 'admin') {
                         adminActions = `
@@ -1040,14 +1045,9 @@
                     case 'link': iconCls = 'icon-link'; iconTxt = '🔗'; break; 
                 }
 
-                let finalUrl = topic.url;
+                // If it's a file, we want them to just view it in a new tab without forced download
+                const actionTxt = 'View';
                 
-                // Route documents through MS Office Viewer to prevent automatic downloading
-                if (topic.type === 'doc' || topic.type === 'sheet' || topic.type === 'slide') {
-                    finalUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(topic.url)}`;
-                }
-
-                const actionTxt = 'View'; // Force the button to say View
                 const tagsHtml = (topic.tags || []).map(tag => `<span class="chip">${tag}</span>`).join('');
                 
                 let adminBtns = '';
@@ -1084,7 +1084,7 @@
                         </div>
                         <div style="display: flex; gap: 0.5rem; align-items: center;">
                             ${adminBtns}
-                            <a href="${finalUrl}" target="_blank" class="btn-action">${actionTxt}</a>
+                            <a href="${topic.url}" target="_blank" class="btn-action">${actionTxt}</a>
                         </div>
                     </div>
                 `;
