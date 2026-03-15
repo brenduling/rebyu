@@ -186,13 +186,15 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            /* Default dynamic card color variable */
+            --card-color: var(--accent-cyan);
         }
 
         .card::before {
             content: '';
             position: absolute;
             top: 0; left: 0; width: 4px; height: 100%;
-            background: var(--accent-cyan);
+            background: var(--card-color);
             transform: scaleY(0);
             transition: transform 0.3s ease;
             transform-origin: bottom;
@@ -201,7 +203,7 @@
         .card:hover {
             transform: translateY(-5px);
             background: var(--surface-hover);
-            border-color: var(--accent-cyan);
+            border-color: var(--card-color);
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
 
@@ -290,7 +292,48 @@
             color: #fff;
         }
 
-        /* --- Admin Controls --- */
+        /* --- Admin Edit Controls --- */
+        .btn-edit {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            background: transparent;
+            color: var(--accent-purple);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-edit:hover {
+            background: var(--accent-purple);
+            color: #fff;
+        }
+
+        /* --- Folder Layout --- */
+        .folder-container {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            background: rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .folder-header {
+            padding: 1rem 1.5rem;
+            font-weight: bold;
+            color: var(--accent-cyan);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .folder-contents {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Admin Controls Layout --- */
         .admin-panel {
             background: rgba(168, 85, 247, 0.05);
             border: 1px dashed var(--accent-purple);
@@ -298,7 +341,7 @@
             border-radius: 12px;
             margin-bottom: 2rem;
             display: none;
-            flex-direction: column; /* Updated for new layout */
+            flex-direction: column;
             gap: 1rem;
         }
 
@@ -307,7 +350,6 @@
             animation: slideUp 0.3s ease;
         }
 
-        /* New class for file upload alignment */
         .input-row { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; width: 100%; }
 
         input, select {
@@ -325,10 +367,18 @@
             border-color: var(--accent-cyan);
         }
 
-        /* Styling for the actual file input */
         input[type="file"] {
             padding: 0.5rem;
             color: var(--text-main);
+        }
+
+        /* Color picker styling */
+        input[type="color"] {
+            flex: 0 0 50px;
+            height: 45px;
+            padding: 2px;
+            cursor: pointer;
+            border-radius: 6px;
         }
 
         .btn-primary {
@@ -347,13 +397,11 @@
             opacity: 0.8;
         }
 
-        /* Disabled state for upload button */
         .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Loading indicator for file uploads */
         #loading-indicator { display: none; color: var(--accent-cyan); font-weight: bold; margin-bottom: 1rem;}
 
-        /* --- Login Modal --- */
+        /* --- Modals --- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -377,20 +425,21 @@
             text-align: center;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
             animation: slideUp 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
-        .modal-content h2 { margin-bottom: 1.5rem; color: var(--accent-cyan); }
-        .modal-content input { margin-bottom: 1rem; width: 100%; }
-        .modal-content .btn-primary { width: 100%; margin-top: 1rem; }
+        .modal-content h2 { color: var(--accent-cyan); margin-bottom: 0.5rem; }
+        .modal-content input, .modal-content select { width: 100%; }
         
         .close-modal {
-            margin-top: 1rem;
+            margin-top: 0.5rem;
             color: var(--text-muted);
             cursor: pointer;
             font-size: 0.9rem;
         }
 
-        /* --- Footer --- */
         footer {
             text-align: center;
             padding: 2rem;
@@ -447,6 +496,7 @@
         <div id="admin-add-course" class="admin-panel">
             <div class="input-row">
                 <input type="text" id="new-course-name" placeholder="Enter Course Title (e.g., Network Engineering)">
+                <input type="color" id="new-course-color" value="#06b6d4" title="Pick Course Color">
                 <button class="btn-primary" onclick="app.addCourse()">+ Add Course</button>
             </div>
         </div>
@@ -495,6 +545,24 @@
             <input type="password" id="auth-pass" placeholder="Password">
             <button class="btn-primary" onclick="app.login()">Login</button>
             <div class="close-modal" onclick="app.closeModal()">Cancel</div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="edit-topic-modal">
+        <div class="modal-content">
+            <h2>Edit Published File</h2>
+            <input type="hidden" id="edit-topic-id">
+            <input type="text" id="edit-topic-title" placeholder="Topic Title">
+            <select id="edit-topic-type">
+                <option value="doc">Document (.docx)</option>
+                <option value="sheet">Spreadsheet (.xlsx)</option>
+                <option value="slide">Presentation (.pptx)</option>
+                <option value="link">External Link</option>
+            </select>
+            <input type="text" id="edit-topic-tags" placeholder="Tags (comma separated)">
+            <input type="text" id="edit-topic-url" placeholder="Direct Link / URL">
+            <button class="btn-primary" onclick="app.saveEditTopic()">Save Changes</button>
+            <div class="close-modal" onclick="app.closeEditModal()">Cancel</div>
         </div>
     </div>
 
@@ -648,6 +716,9 @@
                     btn.style.borderColor = "var(--border)";
                 }
                 this.updateUI();
+                
+                // Re-render current view to show/hide Admin Edit buttons
+                if(this.currentLevel === 'course') this.renderTopics();
             },
 
             navigate(level, id = null) {
@@ -710,30 +781,98 @@
                     container.innerHTML = `<p style="color: var(--text-muted)">No courses available for this term yet.</p>`;
                     return;
                 }
-                container.innerHTML = term.courses.map(course => `<div class="card" onclick="app.navigate('course', '${course.id}')"><h3>${course.name}</h3><p>${course.topics.length} Materials Uploaded</p></div>`).join('');
+                
+                // Injecting Dynamic Course Colors into inline style
+                container.innerHTML = term.courses.map(course => {
+                    const color = course.color || 'var(--accent-cyan)';
+                    return `
+                    <div class="card" onclick="app.navigate('course', '${course.id}')" style="--card-color: ${color};">
+                        <h3 style="color: ${color}; filter: brightness(1.2);">${course.name}</h3>
+                        <p>${course.topics.length} Materials Uploaded</p>
+                    </div>
+                    `;
+                }).join('');
+            },
+
+            // Renders a single topic (used individually or inside folders)
+            renderSingleTopic(topic, isInsideFolder = false) {
+                let iconCls = '', iconTxt = '';
+                switch(topic.type) {
+                    case 'doc': iconCls = 'icon-doc'; iconTxt = 'DOC'; break;
+                    case 'sheet': iconCls = 'icon-sheet'; iconTxt = 'XLS'; break;
+                    case 'slide': iconCls = 'icon-slide'; iconTxt = 'PPT'; break;
+                    case 'link': iconCls = 'icon-link'; iconTxt = '🔗'; break; 
+                }
+
+                const actionTxt = topic.sourceMethod === 'file' ? 'Download' : 'View';
+                const tagsHtml = (topic.tags || []).map(tag => `<span class="chip">${tag}</span>`).join('');
+                
+                // Render Edit button if Admin
+                let editBtn = '';
+                if (this.mode === 'admin') {
+                    editBtn = `<button class="btn-edit" onclick="app.openEditModal('${topic.id}')">✏️ Edit</button>`;
+                }
+
+                // If inside folder, strip borders and margins for clean stacking
+                const extraStyle = isInsideFolder ? 'style="border: none; border-bottom: 1px solid var(--border); border-radius: 0; margin-bottom: 0;"' : '';
+                const titleSize = isInsideFolder ? '1rem' : '1.17em';
+
+                return `
+                    <div class="topic-item" ${extraStyle}>
+                        <div class="topic-info">
+                            <div class="icon-badge ${iconCls}">${iconTxt}</div>
+                            <div>
+                                <h3 style="font-size: ${titleSize}">${topic.title}</h3>
+                                <div class="tags-container">${tagsHtml}</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            ${editBtn}
+                            <a href="${topic.url}" target="_blank" class="btn-action">${actionTxt}</a>
+                        </div>
+                    </div>
+                `;
             },
 
             renderTopics() {
                 const term = this.data.find(t => t.id === this.activeTermId);
                 const course = term.courses.find(c => c.id === this.activeCourseId);
                 const container = document.getElementById('topics-list');
+                
                 if (!course || course.topics.length === 0) {
                     container.innerHTML = `<p style="color: var(--text-muted)">No topics or files uploaded yet.</p>`;
                     return;
                 }
 
-                container.innerHTML = course.topics.map(topic => {
-                    let iconCls = '', iconTxt = '';
-                    switch(topic.type) {
-                        case 'doc': iconCls = 'icon-doc'; iconTxt = 'DOC'; break;
-                        case 'sheet': iconCls = 'icon-sheet'; iconTxt = 'XLS'; break;
-                        case 'slide': iconCls = 'icon-slide'; iconTxt = 'PPT'; break;
-                        case 'link': iconCls = 'icon-link'; iconTxt = '🔗'; break; 
+                // Logic: Group items by Exact Title (case insensitive)
+                const groupedTopics = {};
+                course.topics.forEach(topic => {
+                    const titleKey = topic.title.trim().toLowerCase();
+                    if (!groupedTopics[titleKey]) {
+                        groupedTopics[titleKey] = { title: topic.title.trim(), items: [] };
                     }
+                    groupedTopics[titleKey].items.push(topic);
+                });
 
-                    const actionTxt = topic.sourceMethod === 'file' ? 'Download' : 'View';
-                    const tagsHtml = topic.tags.map(tag => `<span class="chip">${tag}</span>`).join('');
-                    return `<div class="topic-item"><div class="topic-info"><div class="icon-badge ${iconCls}">${iconTxt}</div><div><h3>${topic.title}</h3><div class="tags-container">${tagsHtml}</div></div></div><a href="${topic.url}" target="_blank" class="btn-action">${actionTxt}</a></div>`;
+                const groupsArray = Object.values(groupedTopics);
+
+                container.innerHTML = groupsArray.map(group => {
+                    // If only 1 file with this title, render normally
+                    if (group.items.length === 1) {
+                        return this.renderSingleTopic(group.items[0]);
+                    } 
+                    // If multiple files share the title, render a Folder block
+                    else {
+                        const innerFilesHtml = group.items.map(item => this.renderSingleTopic(item, true)).join('');
+                        return `
+                            <div class="folder-container">
+                                <div class="folder-header">📁 ${group.title} <span style="font-size: 0.8rem; color: var(--text-muted); opacity: 0.8; font-weight: normal;">(${group.items.length} Files)</span></div>
+                                <div class="folder-contents">
+                                    ${innerFilesHtml}
+                                </div>
+                            </div>
+                        `;
+                    }
                 }).join('');
             },
 
@@ -750,9 +889,18 @@
 
             async addCourse() {
                 const input = document.getElementById('new-course-name');
+                const colorInput = document.getElementById('new-course-color');
+                
                 if(!input.value) return alert("Please enter a course title.");
                 const term = this.data.find(t => t.id === this.activeTermId);
-                term.courses.push({ id: this.generateId(), name: input.value, topics: [] }); 
+                
+                term.courses.push({ 
+                    id: this.generateId(), 
+                    name: input.value, 
+                    color: colorInput.value, 
+                    topics: [] 
+                }); 
+                
                 input.value = '';
                 await this.saveData(); 
                 this.renderCourses();
@@ -818,6 +966,52 @@
                 document.getElementById('new-topic-url').value = '';
                 document.getElementById('new-topic-tags').value = '';
                 
+                await this.saveData();
+                this.renderTopics();
+            },
+
+            // --- Admin Editing Logic ---
+            openEditModal(topicId) {
+                const term = this.data.find(t => t.id === this.activeTermId);
+                const course = term.courses.find(c => c.id === this.activeCourseId);
+                const topic = course.topics.find(tp => tp.id === topicId);
+
+                if(!topic) return;
+
+                document.getElementById('edit-topic-id').value = topic.id;
+                document.getElementById('edit-topic-title').value = topic.title;
+                document.getElementById('edit-topic-type').value = topic.type;
+                document.getElementById('edit-topic-tags').value = (topic.tags || []).join(', ');
+                document.getElementById('edit-topic-url').value = topic.url;
+
+                document.getElementById('edit-topic-modal').classList.add('active');
+            },
+
+            closeEditModal() {
+                document.getElementById('edit-topic-modal').classList.remove('active');
+            },
+
+            async saveEditTopic() {
+                const id = document.getElementById('edit-topic-id').value;
+                const title = document.getElementById('edit-topic-title').value;
+                const type = document.getElementById('edit-topic-type').value;
+                const tags = document.getElementById('edit-topic-tags').value.split(',').map(t => t.trim()).filter(t => t.length > 0);
+                const url = document.getElementById('edit-topic-url').value;
+
+                if (!title || !url) return alert("Title and URL are required.");
+
+                const term = this.data.find(t => t.id === this.activeTermId);
+                const course = term.courses.find(c => c.id === this.activeCourseId);
+                const topic = course.topics.find(tp => tp.id === id);
+
+                if(topic) {
+                    topic.title = title;
+                    topic.type = type;
+                    topic.tags = tags;
+                    topic.url = url;
+                }
+
+                this.closeEditModal();
                 await this.saveData();
                 this.renderTopics();
             }
