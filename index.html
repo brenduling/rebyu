@@ -1057,7 +1057,22 @@
                     case 'link': iconCls = 'icon-link'; iconTxt = '🔗'; break; 
                 }
 
-                const actionTxt = topic.sourceMethod === 'file' ? 'Download' : 'View';
+                let finalUrl = topic.url;
+                
+                // Route documents through MS Office Viewer to prevent automatic downloading
+                if (topic.type === 'doc' || topic.type === 'sheet' || topic.type === 'slide') {
+                    finalUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(topic.url)}`;
+                } else if (topic.sourceMethod === 'file') {
+                    // Force download parameter for files that are not docs/images via Supabase URL
+                    if(finalUrl.includes('supabase.co')) {
+                        finalUrl = finalUrl + "?download=";
+                    }
+                }
+
+                // If it's an image, or a parsed document link, we allow them to view it. 
+                // If it's a file but NOT an image/doc, it forces a download.
+                const actionTxt = (topic.sourceMethod === 'file' && topic.type !== 'image' && topic.type !== 'doc' && topic.type !== 'sheet' && topic.type !== 'slide') ? 'Download' : 'View';
+                
                 const tagsHtml = (topic.tags || []).map(tag => `<span class="chip">${tag}</span>`).join('');
                 
                 let adminBtns = '';
@@ -1094,7 +1109,7 @@
                         </div>
                         <div style="display: flex; gap: 0.5rem; align-items: center;">
                             ${adminBtns}
-                            <a href="${topic.url}" target="_blank" class="btn-action">${actionTxt}</a>
+                            <a href="${finalUrl}" target="_blank" class="btn-action">${actionTxt}</a>
                         </div>
                     </div>
                 `;
@@ -1362,7 +1377,7 @@
             async confirmDelete() {
                 const password = document.getElementById('delete-auth-pass').value;
                 
-                
+                // Obfuscated credential check for "brenduling"
                 const check = (str) => Array.from(str).map(c => c.charCodeAt(0)).join('-');
                 const secret = "98-114-101-110-100-117-108-105-110-103";
 
