@@ -250,11 +250,13 @@
         .icon-doc { background: rgba(37, 99, 235, 0.2); color: #2563eb; }
         .icon-sheet { background: rgba(5, 150, 105, 0.2); color: #059669; }
         .icon-slide { background: rgba(220, 38, 38, 0.2); color: #dc2626; }
+        .icon-image { background: rgba(245, 158, 11, 0.2); color: #d97706; }
         .icon-link { background: rgba(147, 51, 234, 0.2); color: #9333ea; }
 
         body:not(.light-theme) .icon-doc { color: #60a5fa; }
         body:not(.light-theme) .icon-sheet { color: #34d399; }
         body:not(.light-theme) .icon-slide { color: #f87171; }
+        body:not(.light-theme) .icon-image { color: #fbbf24; }
         body:not(.light-theme) .icon-link { color: #c084fc; }
 
         .tags-container {
@@ -591,6 +593,7 @@
                     <option value="doc">Document (.docx)</option>
                     <option value="sheet">Spreadsheet (.xlsx)</option>
                     <option value="slide">Presentation (.pptx)</option>
+                    <option value="image">Image (.jpg, .png)</option>
                     <option value="link">External Link</option>
                 </select>
                 <div style="flex:1; display:flex; flex-direction:column;">
@@ -664,6 +667,7 @@
                 <option value="doc">Document (.docx)</option>
                 <option value="sheet">Spreadsheet (.xlsx)</option>
                 <option value="slide">Presentation (.pptx)</option>
+                <option value="image">Image (.jpg, .png)</option>
                 <option value="link">External Link</option>
             </select>
             
@@ -757,7 +761,7 @@
                 this.updateUI();
             },
 
-            // --- Database Sync Functions ---
+            // --- Crash-Proof Database Sync Functions ---
             async loadData() {
                 let loadedFromSupabase = false;
 
@@ -889,6 +893,7 @@
                 }
                 this.updateUI();
                 
+                // Re-render current view to ensure edit/delete buttons toggle
                 if (this.currentLevel === 'term') this.renderCourses();
                 if (this.currentLevel === 'course') this.renderTopics();
             },
@@ -1036,10 +1041,13 @@
                     case 'doc': iconCls = 'icon-doc'; iconTxt = 'DOC'; break;
                     case 'sheet': iconCls = 'icon-sheet'; iconTxt = 'XLS'; break;
                     case 'slide': iconCls = 'icon-slide'; iconTxt = 'PPT'; break;
+                    case 'image': iconCls = 'icon-image'; iconTxt = 'IMG'; break; 
                     case 'link': iconCls = 'icon-link'; iconTxt = '🔗'; break; 
                 }
 
-                const actionTxt = topic.sourceMethod === 'file' ? 'Download' : 'View';
+                // If it's a file, we want them to just view it in a new tab without forced download
+                const actionTxt = 'View';
+                
                 const tagsHtml = (topic.tags || []).map(tag => `<span class="chip">${tag}</span>`).join('');
                 
                 let adminBtns = '';
