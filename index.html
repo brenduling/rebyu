@@ -61,12 +61,10 @@
             margin: 0;
             padding: 0;
             font-family: 'Space Grotesk', sans-serif;
-            /* Security addition */
             user-select: none;
             -webkit-user-select: none;
         }
 
-        /* Allow selection in inputs */
         input, select, textarea {
             user-select: text;
             -webkit-user-select: text;
@@ -111,18 +109,7 @@
             transition: transform 0.3s ease;
         }
 
-        /* Logo Loading Animation */
-        @keyframes pulse-logo {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.15); opacity: 0.6; filter: drop-shadow(0 0 15px var(--accent-cyan)); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .logo-svg.loading-anim {
-            animation: pulse-logo 1.2s infinite ease-in-out;
-        }
-
-        .logo-container:hover .logo-svg:not(.loading-anim) {
+        .logo-container:hover .logo-svg {
             transform: scale(1.05) rotate(-3deg);
         }
 
@@ -355,7 +342,7 @@
             transform: translateY(-2px);
         }
 
-        /* --- Simple Dynamic Filter Bar (No Glassmorphism) --- */
+        /* --- Dynamic Glassmorphism Filter Bar --- */
         .filter-bar {
             display: flex;
             gap: 0.8rem;
@@ -363,9 +350,17 @@
             margin-bottom: 2rem;
             padding: 1rem 1.5rem;
             border-radius: 16px;
-            background: var(--surface); /* Reverted bulky glass blur, back to clean surface */
-            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
             transition: all 0.4s ease;
+        }
+        
+        body.theme-light .filter-bar {
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
 
         .chip.filter-chip {
@@ -575,38 +570,6 @@
             opacity: 1;
         }
 
-        /* PWA Update Banner */
-        #pwa-update-toast {
-            display: none;
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            background: var(--accent-purple);
-            color: #fff;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 10000;
-            align-items: center;
-            gap: 1rem;
-            animation: slideUp 0.3s ease;
-        }
-        #pwa-update-toast.pwa-toast-active {
-            display: flex !important;
-        }
-        .btn-update {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 6px;
-            background: #fff;
-            color: var(--accent-purple);
-            font-weight: bold;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        .btn-update:hover { opacity: 0.9; }
-
         /* --- Theme Grid --- */
         .theme-grid {
             display: grid;
@@ -779,11 +742,6 @@
     </main>
 
     <div id="live-toast">🔄 System Updated Live!</div>
-    
-    <div id="pwa-update-toast">
-        <span>🚀 New update available from Developer!</span>
-        <button class="btn-update" onclick="window.location.reload(true)">Update PWA</button>
-    </div>
 
     <div class="modal-overlay" id="theme-modal">
         <div class="modal-content">
@@ -866,35 +824,6 @@
 
     <script>
         // ==========================================
-        // PWA UPDATE CHECKER & APP VERSION
-        // ==========================================
-        const APP_VERSION = '1.0.1'; // Update this string to force clients to see update banner
-        
-        if (localStorage.getItem('rebyu_version') !== APP_VERSION) {
-            // Delay slightly to ensure smooth loading first
-            setTimeout(() => {
-                document.getElementById('pwa-update-toast').classList.add('pwa-toast-active');
-                localStorage.setItem('rebyu_version', APP_VERSION);
-            }, 1500);
-        }
-
-        // Standard Service Worker logic check for true PWAs
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').then(registration => {
-                    registration.addEventListener('updatefound', () => {
-                        const newWorker = registration.installing;
-                        newWorker.addEventListener('statechange', () => {
-                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                document.getElementById('pwa-update-toast').classList.add('pwa-toast-active');
-                            }
-                        });
-                    });
-                }).catch(err => { /* Quiet fail if sw.js is not present */ });
-            });
-        }
-
-        // ==========================================
         // 1. DYNAMIC MANIFEST & PWA
         // ==========================================
         const manifestData = {
@@ -923,7 +852,7 @@
         }, 2000);
 
         // ==========================================
-        // 3. SUPABASE INITIALIZATION (OBFUSCATED)
+        // 3. SUPABASE INITIALIZATION
         // ==========================================
         let supabaseClient = null;
         try {
@@ -942,7 +871,7 @@
         // ==========================================
         const app = {
             mode: 'student', 
-            currentThemeClass: '', 
+            currentThemeClass: '', // Tracks active theme class
             data: [], 
             currentLevel: 'home',
             activeTermId: null,
@@ -971,9 +900,6 @@
             ],
 
             async init() {
-                const logo = document.querySelector('.logo-svg');
-                if (logo) logo.classList.add('loading-anim');
-
                 this.loadTheme();
                 await this.loadData();
                 this.subscribeToChanges(); // Enable Real-time listener
@@ -981,8 +907,6 @@
                 this.renderTerms();
                 this.updateUI();
                 this.renderThemeModal();
-
-                if (logo) logo.classList.remove('loading-anim');
             },
 
             // --- Theme Logic ---
@@ -1064,7 +988,6 @@
                         if (payload.new && payload.new.state) {
                             this.data = payload.new.state;
                             
-                            // Re-render current view seamlessly
                             if (this.currentLevel === 'home') this.renderTerms();
                             else if (this.currentLevel === 'term') this.renderCourses();
                             else if (this.currentLevel === 'course') this.renderTopics();
@@ -1394,9 +1317,10 @@
                     return;
                 }
 
-                // DYNAMIC COURSE COLOR FILTER
+                // GLASSMORPHISM DYNAMIC COURSE COLOR FILTER
                 const courseColor = course.color || 'var(--accent-cyan)';
                 filterContainer.style.setProperty('--course-color', courseColor);
+                filterContainer.style.boxShadow = `0 8px 32px ${courseColor}33`; // soft glow
                 filterContainer.style.border = `1px solid ${courseColor}55`; // soft border
 
                 // 1. Build Filter Bar
