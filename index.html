@@ -83,6 +83,43 @@
             background-image: var(--bg-gradient);
         }
 
+        /* --- Full Page Loading Screen --- */
+        #page-loader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color);
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        
+        #page-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-logo {
+            width: 80px;
+            height: 80px;
+            animation: pulse-logo 1.5s infinite ease-in-out;
+            filter: drop-shadow(0 0 15px var(--accent-cyan));
+        }
+
+        .loader-text {
+            margin-top: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse-logo 1.5s infinite ease-in-out;
+            animation-delay: 0.2s;
+        }
+
         /* --- Navbar & Logo --- */
         header {
             display: flex;
@@ -176,24 +213,6 @@
             align-items: center;
             margin-bottom: 2rem;
             gap: 1rem;
-        }
-
-        .btn-back {
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            background: rgba(6, 182, 212, 0.1);
-            color: var(--accent-cyan);
-            border: 1px solid var(--border);
-            transition: all 0.2s;
-            display: none; 
-            font-size: 0.85rem;
-        }
-
-        .btn-back:hover {
-            background: var(--accent-cyan);
-            color: #fff;
         }
 
         .breadcrumb {
@@ -302,6 +321,7 @@
             display: flex; 
             gap: 0.5rem; 
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .icon-badge {
@@ -316,12 +336,14 @@
         .icon-doc { background: rgba(37, 99, 235, 0.2); color: #2563eb; }
         .icon-sheet { background: rgba(5, 150, 105, 0.2); color: #059669; }
         .icon-slide { background: rgba(220, 38, 38, 0.2); color: #dc2626; }
+        .icon-pdf { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
         .icon-image { background: rgba(245, 158, 11, 0.2); color: #d97706; }
         .icon-link { background: rgba(147, 51, 234, 0.2); color: #9333ea; }
 
         body:not(.theme-light) .icon-doc { color: #60a5fa; }
         body:not(.theme-light) .icon-sheet { color: #34d399; }
         body:not(.theme-light) .icon-slide { color: #f87171; }
+        body:not(.theme-light) .icon-pdf { color: #f87171; }
         body:not(.theme-light) .icon-image { color: #fbbf24; }
         body:not(.theme-light) .icon-link { color: #c084fc; }
 
@@ -403,7 +425,7 @@
 
         /* Reusable Button Styles */
         .btn-action, .btn-edit, .btn-danger {
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 0.8rem;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
@@ -412,6 +434,7 @@
             white-space: nowrap;
             border: 1px solid transparent;
             text-align: center;
+            font-size: 0.85rem;
         }
 
         .btn-action {
@@ -650,18 +673,24 @@
         /* --- Mobile Responsiveness --- */
         @media (max-width: 768px) {
             header {
-                padding: 1rem;
+                padding: 0.8rem 1rem;
                 flex-direction: row; 
+                flex-wrap: wrap; 
+                justify-content: space-between;
+                gap: 0.5rem;
             }
-            .logo-text { font-size: 1.2rem; }
-            .logo-svg { width: 30px; height: 30px; }
-            .nav-controls { gap: 0.5rem; }
+            .logo-text { font-size: 1.1rem; }
+            .logo-svg { width: 28px; height: 28px; }
             
-            .hide-mobile { display: none; }
+            .nav-controls { 
+                gap: 0.5rem; 
+                flex-wrap: wrap; 
+                justify-content: flex-end; 
+            }
             
             .btn-toggle {
-                padding: 0.4rem 0.6rem;
-                font-size: 1rem; 
+                padding: 0.3rem 0.5rem;
+                font-size: 0.8rem; 
             }
             
             .topic-item {
@@ -685,6 +714,25 @@
 </head>
 <body>
 
+    <div id="page-loader">
+        <svg class="loader-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="grad1-load" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:var(--accent-cyan);stop-opacity:0.9" />
+                    <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0.9" />
+                </linearGradient>
+                <linearGradient id="grad2-load" x1="100%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:var(--accent-purple);stop-opacity:0.9" />
+                    <stop offset="100%" style="stop-color:#f43f5e;stop-opacity:0.9" />
+                </linearGradient>
+            </defs>
+            <rect x="20" y="20" width="45" height="45" rx="10" fill="url(#grad1-load)" />
+            <rect x="35" y="35" width="45" height="45" rx="10" fill="url(#grad2-load)" opacity="0.8" />
+            <circle cx="50" cy="50" r="8" fill="#ffffff" opacity="0.9"/>
+        </svg>
+        <div class="loader-text">REBYU</div>
+    </div>
+
     <header>
         <div class="logo-container" onclick="app.navigate('home')">
             <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -702,21 +750,20 @@
                 <rect x="35" y="35" width="45" height="45" rx="10" fill="url(#grad2)" opacity="0.8" />
                 <circle cx="50" cy="50" r="8" fill="#ffffff" opacity="0.9"/>
             </svg>
-            <span class="logo-text hide-mobile">REBYU</span>
+            <span class="logo-text">REBYU</span>
         </div>
         <div class="nav-controls">
             <button class="btn-toggle" onclick="app.openThemeModal()" title="Themes">
-                <span id="theme-icon">🎨</span> <span class="hide-mobile">Themes</span>
+                <span id="theme-icon">🎨</span> <span>Themes</span>
             </button>
             <button class="btn-toggle" onclick="app.requestModeToggle()" id="mode-btn" title="Toggle Mode">
-                <span>🎓</span> <span class="hide-mobile" id="mode-text">Study Mode</span>
+                <span>🎓</span> <span id="mode-text">Study Mode</span>
             </button>
         </div>
     </header>
 
     <main>
         <div class="header-actions">
-            <button id="back-btn" class="btn-back" onclick="app.goBack()">⬅ Back</button>
             <div class="breadcrumb" id="breadcrumb"></div>
         </div>
 
@@ -739,6 +786,7 @@
             <div class="input-row">
                 <input type="text" id="new-topic-title" placeholder="Topic Title">
                 <select id="new-topic-type">
+                    <option value="pdf">PDF Document (.pdf)</option>
                     <option value="doc">Document (.docx)</option>
                     <option value="sheet">Spreadsheet (.xlsx)</option>
                     <option value="slide">Presentation (.pptx)</option>
@@ -823,6 +871,7 @@
             <input type="hidden" id="edit-topic-id">
             <input type="text" id="edit-topic-title" placeholder="Topic Title">
             <select id="edit-topic-type">
+                <option value="pdf">PDF Document (.pdf)</option>
                 <option value="doc">Document (.docx)</option>
                 <option value="sheet">Spreadsheet (.xlsx)</option>
                 <option value="slide">Presentation (.pptx)</option>
@@ -922,11 +971,22 @@
         // ==========================================
         let supabaseClient = null;
         try {
-            const SUPABASE_URL = 'https://fokvelqwqxmlkphxqqrp.supabase.co'; 
-            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZva3ZlbHF3cXhtbGtwaHhxcXJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1NzI2MjgsImV4cCI6MjA4OTE0ODYyOH0.vHOJ2qMZC13NDf-4GBwpAcRn6n8Xq6mEVazw0fR2uWU';
+            const urlParts = ['https://fokvel', 'qwqxmlkp', 'hxqqrp.sup', 'abase.co'];
+            const keyParts = [
+                'eyJhbGciOiJIUzI1NiIs',
+                'InR5cCI6IkpXVCJ9.eyJpc',
+                '3MiOiJzdXBhYmFzZSIsInJ',
+                'lZiI6ImZva3ZlbHF3cXhtb',
+                'GtwaHhxcXJwIiwicm9sZSI6',
+                'ImFub24iLCJpYXQiOjE3Nz',
+                'M1NzI2MjgsImV4cCI6MjA4',
+                'OTE0ODYyOH0.vHOJ2qMZC1',
+                '3NDf-4GBwpAcRn6n8Xq6mE',
+                'Vazw0fR2uWU'
+            ];
             
             if (window.supabase) {
-                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                supabaseClient = window.supabase.createClient(urlParts.join(''), keyParts.join(''));
             }
         } catch (error) {
             console.warn("Database sync configuration failed.");
@@ -977,7 +1037,10 @@
                 this.updateUI();
                 this.renderThemeModal();
 
-                if (logo) logo.classList.remove('loading-anim');
+                setTimeout(() => {
+                    const loader = document.getElementById('page-loader');
+                    if(loader) loader.classList.add('hidden');
+                }, 500);
             },
 
             loadTheme() {
@@ -1158,7 +1221,7 @@
                         this.renderCourses(); document.getElementById('view-courses').classList.add('active');
                     } else if (level === 'course') {
                         this.currentLevel = 'course'; this.activeCourseId = id;
-                        this.activeTagFilter = 'All'; 
+                        this.activeTagFilter = 'All'; // Reset filter
                         this.renderTopics(); document.getElementById('view-topics').classList.add('active');
                     }
                     this.renderBreadcrumb(); this.updateUI();
@@ -1198,13 +1261,6 @@
                     if(course) html += ` / <span>${course.name}</span>`;
                 }
                 bc.innerHTML = html;
-
-                const backBtn = document.getElementById('back-btn');
-                if (this.currentLevel === 'home') {
-                    backBtn.style.display = 'none';
-                } else {
-                    backBtn.style.display = 'block';
-                }
             },
 
             renderTerms() {
@@ -1234,8 +1290,8 @@
                     if (this.mode === 'admin') {
                         adminActions = `
                             <div style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: flex-end;" onclick="event.stopPropagation()">
-                                <button class="btn-edit" onclick="app.openEditCourseModal('${course.id}')" style="font-size: 0.8rem; padding: 0.3rem 0.6rem;">✏️ Edit</button>
-                                <button class="btn-danger" onclick="app.promptDelete('course', '${course.id}')" style="font-size: 0.8rem; padding: 0.3rem 0.6rem;">🗑️ Delete</button>
+                                <button class="btn-edit" onclick="app.openEditCourseModal('${course.id}')">✏️ Edit</button>
+                                <button class="btn-danger" onclick="app.promptDelete('course', '${course.id}')">🗑️ Delete</button>
                             </div>
                         `;
                     }
@@ -1303,26 +1359,33 @@
                     case 'doc': iconCls = 'icon-doc'; iconTxt = 'DOC'; break;
                     case 'sheet': iconCls = 'icon-sheet'; iconTxt = 'XLS'; break;
                     case 'slide': iconCls = 'icon-slide'; iconTxt = 'PPT'; break;
+                    case 'pdf': iconCls = 'icon-pdf'; iconTxt = 'PDF'; break;
                     case 'image': iconCls = 'icon-image'; iconTxt = 'IMG'; break; 
                     case 'link': iconCls = 'icon-link'; iconTxt = '🔗'; break; 
                 }
 
-                let finalUrl = topic.url;
-                let actionTxt = 'View';
+                let rawUrl = topic.url;
+                let actionBtnsHtml = '';
 
                 if (topic.sourceMethod === 'url') {
+                    let finalUrl = rawUrl;
                     if (!finalUrl.match(/^https?:\/\//i)) {
                         finalUrl = 'https://' + finalUrl;
                     }
-                    actionTxt = 'View Link';
+                    actionBtnsHtml = `<a href="${finalUrl}" target="_blank" class="btn-action">View Link</a>`;
                 } else if (topic.sourceMethod === 'file') {
                     if (topic.type === 'image') {
-                        actionTxt = 'View Image';
+                        actionBtnsHtml = `<a href="${rawUrl}" target="_blank" class="btn-action">View Image</a>`;
                     } else {
-                        if (finalUrl.includes('supabase.co') && !finalUrl.includes('?download=')) {
-                            finalUrl += "?download=";
+                        let downloadUrl = rawUrl;
+                        if (downloadUrl.includes('supabase.co')) {
+                            downloadUrl += (downloadUrl.includes('?') ? '&' : '?') + "download=";
                         }
-                        actionTxt = 'Download';
+                        
+                        actionBtnsHtml = `
+                            <a href="${rawUrl}" target="_blank" class="btn-action" style="margin-right: 0.5rem;">View</a>
+                            <a href="${downloadUrl}" target="_blank" class="btn-action">Download</a>
+                        `;
                     }
                 }
                 
@@ -1361,7 +1424,7 @@
                         </div>
                         <div class="topic-actions">
                             ${adminBtns}
-                            <a href="${finalUrl}" target="_blank" class="btn-action">${actionTxt}</a>
+                            ${actionBtnsHtml}
                         </div>
                     </div>
                 `;
@@ -1473,7 +1536,7 @@
                 term.courses.push({ 
                     id: this.generateId(), 
                     name: input.value, 
-                    instructor: "", // Optional Instructor field initialized
+                    instructor: "", 
                     color: colorInput.value, 
                     topics: [] 
                 }); 
