@@ -24,11 +24,9 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --modal-bg: rgba(10, 14, 23, 0.95);
-            --bg-gradient: radial-gradient(circle at 15% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 50%), radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.05) 0%, transparent 50%);
         }
 
-        /* Original Light Theme */
-        body.theme-light {
+        body.light-theme {
             --bg-color: #f1f5f9;
             --surface: rgba(255, 255, 255, 0.7);
             --surface-hover: rgba(255, 255, 255, 1);
@@ -36,35 +34,19 @@
             --text-main: #0f172a;
             --text-muted: #475569;
             --modal-bg: rgba(255, 255, 255, 0.95);
-            --bg-gradient: none;
         }
-
-        /* 15 NEW THEMES */
-        body.theme-3d { --bg-color: #1a1a2e; --surface: linear-gradient(145deg, #16213e, #0f3460); --surface-hover: linear-gradient(145deg, #1f2b54, #1a4a82); --border: #e94560; --accent-cyan: #e94560; --accent-purple: #0f3460; --text-main: #fff; --text-muted: #b0c4de; --modal-bg: #1a1a2e; --bg-gradient: radial-gradient(circle, #1a1a2e 0%, #000 100%); }
-        body.theme-science { --bg-color: #0b1d12; --surface: rgba(12, 43, 27, 0.8); --surface-hover: rgba(22, 63, 42, 0.9); --border: #00ff88; --accent-cyan: #00ff88; --accent-purple: #00bfff; --text-main: #e0ffe0; --text-muted: #80c0a0; --modal-bg: #0b1d12; --bg-gradient: radial-gradient(circle at top right, rgba(0,255,136,0.1), transparent); }
-        body.theme-technology { --bg-color: #0d1117; --surface: rgba(30, 41, 59, 0.8); --surface-hover: rgba(51, 65, 85, 0.9); --border: #38bdf8; --accent-cyan: #38bdf8; --accent-purple: #818cf8; --text-main: #f8fafc; --text-muted: #94a3b8; --modal-bg: #0f172a; --bg-gradient: linear-gradient(to bottom right, #0f172a, #020617); }
-        body.theme-cartoon { --bg-color: #ffde59; --surface: #ffffff; --surface-hover: #f1f5f9; --border: #000000; --accent-cyan: #ff3131; --accent-purple: #5ce1e6; --text-main: #000; --text-muted: #333; --modal-bg: #fff; --bg-gradient: none; }
-        body.theme-games { --bg-color: #000000; --surface: rgba(20, 20, 20, 0.9); --surface-hover: rgba(40, 40, 40, 1); --border: #ff003c; --accent-cyan: #ff003c; --accent-purple: #00e5ff; --text-main: #fff; --text-muted: #aaa; --modal-bg: #111; --bg-gradient: radial-gradient(circle at center, #220000 0%, #000 100%); }
-        body.theme-anime { --bg-color: #ffe6ea; --surface: rgba(255, 255, 255, 0.8); --surface-hover: #fff; --border: #ff8fab; --accent-cyan: #fb6f92; --accent-purple: #ffb3c6; --text-main: #590d22; --text-muted: #800f2f; --modal-bg: #fff0f3; --bg-gradient: linear-gradient(135deg, #ffe6ea, #ffb3c6); }
-        body.theme-drama { --bg-color: #2b0000; --surface: rgba(60, 0, 0, 0.8); --surface-hover: rgba(90, 0, 0, 0.9); --border: #d4af37; --accent-cyan: #d4af37; --accent-purple: #8b0000; --text-main: #fff; --text-muted: #d4af37; --modal-bg: #3c0000; --bg-gradient: linear-gradient(to bottom, #2b0000, #000); }
-        body.theme-artists { --bg-color: #fcf6f5; --surface: #fff; --surface-hover: #f4eae6; --border: #ff9a8b; --accent-cyan: #ff9a8b; --accent-purple: #6c5b7b; --text-main: #355c7d; --text-muted: #6c5b7b; --modal-bg: #fcf6f5; --bg-gradient: linear-gradient(120deg, #fcf6f5, #ffcece); }
-        body.theme-cyberpunk { --bg-color: #0d0221; --surface: rgba(20, 0, 40, 0.8); --surface-hover: rgba(40, 0, 80, 0.9); --border: #00ffff; --accent-cyan: #00ffff; --accent-purple: #ff00ff; --text-main: #e0e0ff; --text-muted: #8888bb; --modal-bg: #0d0221; --bg-gradient: linear-gradient(45deg, #0d0221, #240046); }
-        body.theme-nature { --bg-color: #e8f5e9; --surface: #fff; --surface-hover: #f1f8e9; --border: #4caf50; --accent-cyan: #4caf50; --accent-purple: #8bc34a; --text-main: #1b5e20; --text-muted: #388e3c; --modal-bg: #fff; --bg-gradient: linear-gradient(to bottom, #e8f5e9, #c8e6c9); }
-        body.theme-ocean { --bg-color: #e0f7fa; --surface: #ffffff; --surface-hover: #e0f2f1; --border: #00bcd4; --accent-cyan: #00bcd4; --accent-purple: #009688; --text-main: #006064; --text-muted: #00838f; --modal-bg: #fff; --bg-gradient: linear-gradient(to bottom, #e0f7fa, #b2ebf2); }
-        body.theme-sunset { --bg-color: #2d132c; --surface: rgba(128, 19, 54, 0.6); --surface-hover: rgba(199, 44, 65, 0.8); --border: #ee4540; --accent-cyan: #ee4540; --accent-purple: #c72c41; --text-main: #fff; --text-muted: #ffb6b9; --modal-bg: #2d132c; --bg-gradient: linear-gradient(to top, #2d132c, #801336); }
-        body.theme-synthwave { --bg-color: #120424; --surface: rgba(43, 15, 76, 0.7); --surface-hover: rgba(74, 21, 133, 0.8); --border: #f706d6; --accent-cyan: #0ff0fc; --accent-purple: #f706d6; --text-main: #fff; --text-muted: #0ff0fc; --modal-bg: #1a0833; --bg-gradient: linear-gradient(180deg, #120424, #2b0f4c); }
-        body.theme-midnight { --bg-color: #0b0c10; --surface: rgba(31, 40, 51, 0.7); --surface-hover: rgba(69, 162, 158, 0.2); --border: #66fcf1; --accent-cyan: #66fcf1; --accent-purple: #45a29e; --text-main: #c5c6c7; --text-muted: #45a29e; --modal-bg: #0b0c10; --bg-gradient: none; }
-        body.theme-space { --bg-color: #000; --surface: rgba(20, 20, 40, 0.8); --surface-hover: rgba(40, 40, 80, 0.9); --border: #fff; --accent-cyan: #fff; --accent-purple: #555; --text-main: #fff; --text-muted: #aaa; --modal-bg: #0a0a1a; --bg-gradient: radial-gradient(circle, #112 0%, #000 100%); }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Space Grotesk', sans-serif;
+            /* Security addition */
             user-select: none;
             -webkit-user-select: none;
         }
 
+        /* Allow selection in inputs */
         input, select, textarea {
             user-select: text;
             -webkit-user-select: text;
@@ -78,7 +60,9 @@
             flex-direction: column;
             overflow-x: hidden;
             transition: background-color 0.3s, color 0.3s;
-            background-image: var(--bg-gradient);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.05) 0%, transparent 50%);
         }
 
         /* --- Navbar & Logo --- */
@@ -105,12 +89,12 @@
         .logo-svg {
             width: 45px;
             height: 45px;
-            filter: drop-shadow(0 0 8px var(--accent-purple));
+            filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.4));
             transition: transform 0.3s ease;
         }
 
         .logo-container:hover .logo-svg {
-            transform: scale(1.05) rotate(-3deg);
+            transform: scale(1.05);
         }
 
         .logo-text {
@@ -143,7 +127,7 @@
 
         .btn-toggle:hover {
             border-color: var(--accent-purple);
-            box-shadow: 0 0 15px var(--accent-purple);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
         }
 
         /* --- Layout & Transitions --- */
@@ -155,21 +139,12 @@
             padding: 0 1.5rem;
         }
 
-        .header-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
         .breadcrumb {
+            margin-bottom: 2rem;
             color: var(--text-muted);
             font-size: 0.9rem;
             display: flex;
             gap: 0.5rem;
-            flex-wrap: wrap;
         }
 
         .breadcrumb span {
@@ -178,23 +153,6 @@
         }
 
         .breadcrumb span:hover {
-            color: var(--accent-cyan);
-        }
-
-        .btn-back {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            background: var(--surface);
-            color: var(--text-main);
-            border: 1px solid var(--border);
-            transition: all 0.2s;
-            display: none; 
-        }
-
-        .btn-back:hover {
-            border-color: var(--accent-cyan);
             color: var(--accent-cyan);
         }
 
@@ -278,13 +236,6 @@
             align-items: center;
             gap: 1rem;
             flex: 1;
-            min-width: 250px;
-        }
-
-        .topic-actions {
-            display: flex; 
-            gap: 0.5rem; 
-            align-items: center;
         }
 
         .icon-badge {
@@ -302,11 +253,11 @@
         .icon-image { background: rgba(245, 158, 11, 0.2); color: #d97706; }
         .icon-link { background: rgba(147, 51, 234, 0.2); color: #9333ea; }
 
-        body:not(.theme-light) .icon-doc { color: #60a5fa; }
-        body:not(.theme-light) .icon-sheet { color: #34d399; }
-        body:not(.theme-light) .icon-slide { color: #f87171; }
-        body:not(.theme-light) .icon-image { color: #fbbf24; }
-        body:not(.theme-light) .icon-link { color: #c084fc; }
+        body:not(.light-theme) .icon-doc { color: #60a5fa; }
+        body:not(.light-theme) .icon-sheet { color: #34d399; }
+        body:not(.light-theme) .icon-slide { color: #f87171; }
+        body:not(.light-theme) .icon-image { color: #fbbf24; }
+        body:not(.light-theme) .icon-link { color: #c084fc; }
 
         .tags-container {
             display: flex;
@@ -318,7 +269,7 @@
         .chip {
             background: rgba(168, 85, 247, 0.15);
             color: var(--accent-purple);
-            border: 1px solid var(--border);
+            border: 1px solid rgba(168, 85, 247, 0.4);
             padding: 0.2rem 0.6rem;
             border-radius: 12px;
             font-size: 0.75rem;
@@ -370,39 +321,58 @@
             box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
         }
 
-        /* Reusable Button Styles */
-        .btn-action, .btn-edit, .btn-danger {
+        .btn-action {
             padding: 0.5rem 1rem;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(6, 182, 212, 0.3);
             text-decoration: none;
             transition: all 0.2s;
             white-space: nowrap;
-            border: 1px solid transparent;
-            text-align: center;
         }
 
-        .btn-action {
-            background: rgba(6, 182, 212, 0.1);
-            color: var(--accent-cyan);
-            border-color: rgba(6, 182, 212, 0.3);
+        .btn-action:hover {
+            background: var(--accent-cyan);
+            color: #fff;
         }
-        .btn-action:hover { background: var(--accent-cyan); color: #fff; }
 
+        /* --- Admin Edit/Delete Controls --- */
         .btn-edit {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
             background: transparent;
             color: var(--accent-purple);
-            border-color: rgba(168, 85, 247, 0.4);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
         }
-        .btn-edit:hover { background: var(--accent-purple); color: #fff; }
+        .btn-edit:hover {
+            background: var(--accent-purple);
+            color: #fff;
+        }
 
         .btn-danger {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
             background: transparent;
             color: #ef4444;
-            border-color: rgba(239, 68, 68, 0.4);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
         }
-        .btn-danger:hover { background: #ef4444; color: #fff; }
+        .btn-danger:hover {
+            background: #ef4444;
+            color: #fff;
+        }
 
         /* Drag and Drop visual styles */
         .drag-handle {
@@ -413,9 +383,16 @@
             display: flex;
             align-items: center;
         }
-        .drag-handle:active { cursor: grabbing; }
-        .drag-over { box-shadow: 0 -4px 0 var(--accent-cyan); opacity: 0.8; }
-        .dragging { opacity: 0.4; }
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+        .drag-over {
+            box-shadow: 0 -4px 0 var(--accent-cyan);
+            opacity: 0.8;
+        }
+        .dragging {
+            opacity: 0.4;
+        }
 
         /* --- Folder Layout --- */
         .folder-container {
@@ -452,10 +429,12 @@
             flex-direction: column;
             gap: 1rem;
         }
+
         .admin-panel.visible {
             display: flex;
             animation: slideUp 0.3s ease;
         }
+
         .input-row { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; width: 100%; }
 
         input, select {
@@ -468,9 +447,24 @@
             flex: 1;
             min-width: 200px;
         }
-        input:focus, select:focus { border-color: var(--accent-cyan); }
-        input[type="file"] { padding: 0.5rem; color: var(--text-main); }
-        input[type="color"] { flex: 0 0 50px; height: 45px; padding: 2px; cursor: pointer; border-radius: 6px; }
+
+        input:focus, select:focus {
+            border-color: var(--accent-cyan);
+        }
+
+        input[type="file"] {
+            padding: 0.5rem;
+            color: var(--text-main);
+        }
+
+        /* Color picker styling */
+        input[type="color"] {
+            flex: 0 0 50px;
+            height: 45px;
+            padding: 2px;
+            cursor: pointer;
+            border-radius: 6px;
+        }
 
         .btn-primary {
             background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
@@ -483,7 +477,11 @@
             transition: opacity 0.2s;
             white-space: nowrap;
         }
-        .btn-primary:hover { opacity: 0.8; }
+
+        .btn-primary:hover {
+            opacity: 0.8;
+        }
+
         .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
         #loading-indicator { display: none; color: var(--accent-cyan); font-weight: bold; margin-bottom: 1rem;}
@@ -499,6 +497,7 @@
             align-items: center;
             z-index: 1000;
         }
+
         .modal-overlay.active { display: flex; }
 
         .modal-content {
@@ -515,6 +514,7 @@
             flex-direction: column;
             gap: 1rem;
         }
+
         .modal-content h2 { color: var(--accent-cyan); margin-bottom: 0.5rem; }
         .modal-content input, .modal-content select { width: 100%; }
         
@@ -525,56 +525,6 @@
             font-size: 0.9rem;
         }
 
-        /* Live Toast Notification */
-        #live-toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--accent-cyan);
-            color: #000;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 9999;
-        }
-        #live-toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        /* --- Theme Grid --- */
-        .theme-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 1rem;
-            max-height: 50vh;
-            overflow-y: auto;
-            padding: 1rem 0;
-        }
-        .theme-btn {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            color: var(--text-main);
-            font-weight: bold;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s;
-        }
-        .theme-btn:hover {
-            border-color: var(--accent-cyan);
-            background: var(--surface-hover);
-            transform: scale(1.05);
-        }
-
         footer {
             text-align: center;
             padding: 2rem;
@@ -582,41 +532,6 @@
             font-size: 0.9rem;
             border-top: 1px solid var(--border);
             margin-top: auto;
-        }
-
-        /* --- Mobile Responsiveness --- */
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                padding: 1rem;
-                gap: 1rem;
-            }
-            .logo-text { font-size: 1.5rem; }
-            .logo-svg { width: 35px; height: 35px; }
-            .nav-controls {
-                width: 100%;
-                justify-content: space-around;
-            }
-            .btn-toggle {
-                font-size: 0.85rem;
-                padding: 0.4rem 0.8rem;
-            }
-            .topic-item {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .topic-actions {
-                justify-content: flex-end;
-                margin-top: 0.5rem;
-                width: 100%;
-            }
-            .input-row {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .btn-action, .btn-edit, .btn-danger {
-                flex: 1;
-            }
         }
     </style>
 </head>
@@ -627,27 +542,25 @@
             <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                     <linearGradient id="gradCyan" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:var(--accent-cyan);stop-opacity:1" />
+                        <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
                         <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
                     </linearGradient>
                     <linearGradient id="gradPurple" x1="0%" y1="100%" x2="100%" y2="0%">
-                        <stop offset="0%" style="stop-color:var(--accent-purple);stop-opacity:1" />
+                        <stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" />
                         <stop offset="100%" style="stop-color:#f43f5e;stop-opacity:1" />
                     </linearGradient>
-                    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                        <feGaussianBlur stdDeviation="3" result="blur" />
-                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                    </filter>
                 </defs>
-                <path d="M 50 15 L 15 30 L 15 65 C 15 80 40 90 50 95 C 60 90 85 80 85 65 L 85 30 Z" fill="none" stroke="url(#gradCyan)" stroke-width="4" stroke-linejoin="round"/>
-                <path d="M 35 70 L 35 35 L 55 35 C 65 35 65 50 55 50 L 35 50 M 50 50 L 65 70" fill="none" stroke="url(#gradPurple)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
-                <path d="M 50 15 L 50 95" stroke="url(#gradCyan)" stroke-width="2" opacity="0.5" stroke-dasharray="4 4"/>
+                <path d="M 12 70 C 25 70 40 55 50 75 C 60 55 75 70 88 70 L 88 35 C 75 35 60 20 50 40 C 40 20 25 35 12 35 Z" fill="none" stroke="url(#gradCyan)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                <line x1="50" y1="40" x2="50" y2="75" stroke="url(#gradCyan)" stroke-width="6" stroke-linecap="round"/>
+                <path d="M 25 55 L 45 35 L 60 50 L 90 15" fill="none" stroke="url(#gradPurple)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M 70 15 L 90 15 L 90 35" fill="none" stroke="url(#gradPurple)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="25" cy="55" r="5" fill="#a855f7" />
             </svg>
             <span class="logo-text">REBYU</span>
         </div>
         <div class="nav-controls">
-            <button class="btn-toggle" onclick="app.openThemeModal()">
-                <span id="theme-icon">🎨</span> Themes
+            <button class="btn-toggle" onclick="app.toggleTheme()">
+                <span id="theme-icon">☀️</span>
             </button>
             <button class="btn-toggle" onclick="app.requestModeToggle()" id="mode-btn">
                 <span>🎓</span> Student Mode
@@ -656,10 +569,7 @@
     </header>
 
     <main>
-        <div class="header-actions">
-            <div class="breadcrumb" id="breadcrumb"></div>
-            <button id="back-btn" class="btn-back" onclick="app.goBack()">⬅ Back</button>
-        </div>
+        <div class="breadcrumb" id="breadcrumb"></div>
 
         <div id="admin-add-term" class="admin-panel">
             <div class="input-row">
@@ -709,24 +619,19 @@
             <div id="loading-indicator">Uploading File... Please Wait.</div>
         </div>
 
-        <div id="view-terms" class="view-section active"><div class="grid-list" id="terms-list"></div></div>
-        <div id="view-courses" class="view-section"><div class="grid-list" id="courses-list"></div></div>
+        <div id="view-terms" class="view-section active">
+            <div class="grid-list" id="terms-list"></div>
+        </div>
+
+        <div id="view-courses" class="view-section">
+            <div class="grid-list" id="courses-list"></div>
+        </div>
+
         <div id="view-topics" class="view-section">
             <div id="topic-filters" class="filter-bar"></div>
             <div id="topics-list"></div>
         </div>
     </main>
-
-    <div id="live-toast">🔄 System Updated Live!</div>
-
-    <div class="modal-overlay" id="theme-modal">
-        <div class="modal-content">
-            <h2>Select Theme</h2>
-            <div class="theme-grid" id="theme-grid-list">
-                </div>
-            <div class="close-modal" onclick="app.closeModal('theme-modal')">Cancel</div>
-        </div>
-    </div>
 
     <div class="modal-overlay" id="auth-modal">
         <div class="modal-content">
@@ -812,9 +717,7 @@
         // ==========================================
         // 2. SECURITY & ANTI-INSPECT MEASURES
         // ==========================================
-        document.addEventListener('contextmenu', e => e.preventDefault()); // Block Right Click
-        document.onselectstart = function() { return false; }; // Prevent Highlighting
-        
+        document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
             if (e.keyCode === 123) e.preventDefault(); // Block F12
             if (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) e.preventDefault(); // Block Inspect
@@ -828,7 +731,6 @@
         try {
             const SUPABASE_URL = 'https://fokvelqwqxmlkphxqqrp.supabase.co'; 
             const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZva3ZlbHF3cXhtbGtwaHhxcXJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1NzI2MjgsImV4cCI6MjA4OTE0ODYyOH0.vHOJ2qMZC13NDf-4GBwpAcRn6n8Xq6mEVazw0fR2uWU';
-            
             if (window.supabase) {
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             }
@@ -841,88 +743,28 @@
         // ==========================================
         const app = {
             mode: 'student', 
-            currentThemeClass: '', // Tracks active theme class
+            theme: 'dark',
             data: [], 
             currentLevel: 'home',
             activeTermId: null,
             activeCourseId: null,
             activeTagFilter: 'All', 
+            
+            // Tracks what needs to be deleted
             deleteTarget: { type: null, id: null }, 
 
-            themes: [
-                { id: '', icon: '🌙', name: 'Dark' },
-                { id: 'theme-light', icon: '☀️', name: 'Light' },
-                { id: 'theme-3d', icon: '🧊', name: '3D Depth' },
-                { id: 'theme-science', icon: '🔬', name: 'Science' },
-                { id: 'theme-technology', icon: '💻', name: 'Tech' },
-                { id: 'theme-cartoon', icon: '🎨', name: 'Cartoon' },
-                { id: 'theme-games', icon: '🎮', name: 'Games' },
-                { id: 'theme-anime', icon: '🌸', name: 'Anime' },
-                { id: 'theme-drama', icon: '🎭', name: 'Drama' },
-                { id: 'theme-artists', icon: '🖌️', name: 'Artists' },
-                { id: 'theme-cyberpunk', icon: '🤖', name: 'Cyberpunk' },
-                { id: 'theme-nature', icon: '🌿', name: 'Nature' },
-                { id: 'theme-ocean', icon: '🌊', name: 'Ocean' },
-                { id: 'theme-sunset', icon: '🌇', name: 'Sunset' },
-                { id: 'theme-synthwave', icon: '📻', name: 'Synthwave' },
-                { id: 'theme-midnight', icon: '🌌', name: 'Midnight' },
-                { id: 'theme-space', icon: '🚀', name: 'Space' }
-            ],
-
             async init() {
-                this.loadTheme();
                 await this.loadData();
                 this.subscribeToChanges(); // Enable Real-time listener
                 this.renderBreadcrumb();
                 this.renderTerms();
                 this.updateUI();
-                this.renderThemeModal();
-            },
-
-            // --- Theme Logic ---
-            loadTheme() {
-                const saved = localStorage.getItem('rebyu_theme');
-                if (saved) {
-                    this.applyTheme(saved);
-                }
-            },
-            
-            openThemeModal() {
-                document.getElementById('theme-modal').classList.add('active');
-            },
-
-            renderThemeModal() {
-                const grid = document.getElementById('theme-grid-list');
-                grid.innerHTML = this.themes.map(t => `
-                    <div class="theme-btn" onclick="app.applyTheme('${t.id}')">
-                        <span style="font-size: 1.5rem;">${t.icon}</span>
-                        <span>${t.name}</span>
-                    </div>
-                `).join('');
-            },
-
-            applyTheme(themeId) {
-                // Remove old theme
-                if (this.currentThemeClass) {
-                    document.body.classList.remove(this.currentThemeClass);
-                }
-                // Apply new theme
-                if (themeId) {
-                    document.body.classList.add(themeId);
-                }
-                this.currentThemeClass = themeId;
-                localStorage.setItem('rebyu_theme', themeId);
-                
-                // Update icon in header to match selection roughly
-                const selected = this.themes.find(t => t.id === themeId);
-                if (selected) document.getElementById('theme-icon').textContent = selected.icon;
-                
-                this.closeModal('theme-modal');
             },
 
             // --- Crash-Proof Database Sync Functions ---
             async loadData() {
                 let loadedFromSupabase = false;
+
                 if (supabaseClient) {
                     try {
                         const { data, error } = await supabaseClient.from('rebyu_data').select('state').eq('id', 1).single();
@@ -930,23 +772,33 @@
                             this.data = data.state;
                             loadedFromSupabase = true;
                         }
-                    } catch(e) { console.warn("Supabase database fetch failed."); }
+                    } catch(e) { 
+                        console.warn("Supabase database fetch failed. Ensure your 'rebyu_data' table exists."); 
+                    }
                 }
 
                 if (!loadedFromSupabase) {
                     const storedData = localStorage.getItem('rebyu_data');
-                    if (storedData) this.data = JSON.parse(storedData);
+                    if (storedData) {
+                        this.data = JSON.parse(storedData);
+                    }
                 }
             },
 
             async saveData() {
                 localStorage.setItem('rebyu_data', JSON.stringify(this.data));
+
                 if (supabaseClient) {
-                    try { await supabaseClient.from('rebyu_data').update({ state: this.data }).eq('id', 1); } catch(e) { console.warn("Supabase update failed."); }
+                    try {
+                        await supabaseClient.from('rebyu_data').update({ state: this.data }).eq('id', 1);
+                    } catch(e) { 
+                        console.warn("Supabase update failed."); 
+                    }
                 }
             },
 
             // --- REALTIME LISTENER ---
+            // Triggers automatically whenever Supabase sees a change to the database
             subscribeToChanges() {
                 if (!supabaseClient) return;
 
@@ -954,24 +806,27 @@
                     .channel('public:rebyu_data')
                     .on('postgres_changes', { event: '*', schema: 'public', table: 'rebyu_data' }, payload => {
                         if (payload.new && payload.new.state) {
+                            // Update local data with the new live data
                             this.data = payload.new.state;
                             
+                            // Re-render only the current view to make it seamless
                             if (this.currentLevel === 'home') this.renderTerms();
                             else if (this.currentLevel === 'term') this.renderCourses();
                             else if (this.currentLevel === 'course') this.renderTopics();
                             
                             this.renderBreadcrumb();
-
-                            // Show Live Sync Notification Toast
-                            const toast = document.getElementById('live-toast');
-                            toast.classList.add('show');
-                            setTimeout(() => toast.classList.remove('show'), 3000);
                         }
                     })
                     .subscribe();
             },
 
             // --- UI Interaction Functions ---
+            toggleTheme() {
+                this.theme = this.theme === 'dark' ? 'light' : 'dark';
+                document.body.classList.toggle('light-theme');
+                document.getElementById('theme-icon').textContent = this.theme === 'dark' ? '☀️' : '🌙';
+            },
+
             toggleUploadMethod() {
                 const method = document.getElementById('input-method').value;
                 if (method === 'url') {
@@ -1018,15 +873,7 @@
             },
 
             login() {
-                const u = document.getElementById('auth-user').value;
-                const p = document.getElementById('auth-pass').value;
-
-                // Obfuscated credential check for "brenduling" and "brenduling231524"
-                const check = (str) => Array.from(str).map(c => c.charCodeAt(0)).join('-');
-                const uSecret = "98-114-101-110-100-117-108-105-110-103"; 
-                const pSecret = "98-114-101-110-100-117-108-105-110-103-50-51-49-53-50-52"; 
-
-                if (check(u) === uSecret && check(p) === pSecret) {
+                if (document.getElementById('auth-user').value === 'brenduling' && document.getElementById('auth-pass').value === 'brenduling') {
                     this.closeModal('auth-modal'); 
                     this.setMode('admin');
                 } else { 
@@ -1046,6 +893,7 @@
                 }
                 this.updateUI();
                 
+                // Re-render current view to ensure edit/delete buttons toggle
                 if (this.currentLevel === 'term') this.renderCourses();
                 if (this.currentLevel === 'course') this.renderTopics();
             },
@@ -1066,14 +914,6 @@
                     }
                     this.renderBreadcrumb(); this.updateUI();
                 }, 50);
-            },
-
-            goBack() {
-                if (this.currentLevel === 'course') {
-                    this.navigate('term', this.activeTermId);
-                } else if (this.currentLevel === 'term') {
-                    this.navigate('home');
-                }
             },
 
             updateUI() {
@@ -1101,13 +941,6 @@
                     if(course) html += ` / <span>${course.name}</span>`;
                 }
                 bc.innerHTML = html;
-
-                const backBtn = document.getElementById('back-btn');
-                if (this.currentLevel === 'home') {
-                    backBtn.style.display = 'none';
-                } else {
-                    backBtn.style.display = 'block';
-                }
             },
 
             renderTerms() {
@@ -1133,6 +966,7 @@
                         ? `<p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">👨‍🏫 ${course.instructor}</p>` 
                         : '';
                     
+                    // Admin Action Buttons
                     let adminActions = '';
                     if (this.mode === 'admin') {
                         adminActions = `
@@ -1211,18 +1045,8 @@
                     case 'link': iconCls = 'icon-link'; iconTxt = '🔗'; break; 
                 }
 
-                let finalUrl = topic.url;
-                
-                // Route documents through MS Office Viewer to prevent automatic downloading
-                if (topic.type === 'doc' || topic.type === 'sheet' || topic.type === 'slide') {
-                    finalUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(topic.url)}`;
-                } else if (topic.sourceMethod === 'file') {
-                    if(finalUrl.includes('supabase.co')) {
-                        finalUrl = finalUrl + "?download=";
-                    }
-                }
-
-                const actionTxt = (topic.sourceMethod === 'file' && topic.type !== 'image' && topic.type !== 'doc' && topic.type !== 'sheet' && topic.type !== 'slide') ? 'Download' : 'View';
+                // If it's a file, we want them to just view it in a new tab without forced download
+                const actionTxt = 'View';
                 
                 const tagsHtml = (topic.tags || []).map(tag => `<span class="chip">${tag}</span>`).join('');
                 
@@ -1258,9 +1082,9 @@
                                 <div class="tags-container">${tagsHtml}</div>
                             </div>
                         </div>
-                        <div class="topic-actions">
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
                             ${adminBtns}
-                            <a href="${finalUrl}" target="_blank" class="btn-action">${actionTxt}</a>
+                            <a href="${topic.url}" target="_blank" class="btn-action">${actionTxt}</a>
                         </div>
                     </div>
                 `;
@@ -1527,12 +1351,7 @@
 
             async confirmDelete() {
                 const password = document.getElementById('delete-auth-pass').value;
-                
-                // Obfuscated credential check
-                const check = (str) => Array.from(str).map(c => c.charCodeAt(0)).join('-');
-                const secret = "98-114-101-110-100-117-108-105-110-103";
-
-                if (check(password) !== secret) {
+                if (password !== 'brenduling') {
                     return alert("Incorrect Password. Deletion cancelled.");
                 }
 
