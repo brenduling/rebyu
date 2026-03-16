@@ -228,10 +228,14 @@
             cursor: pointer;
             transition: color 0.2s;
             font-weight: 600;
+            background: rgba(6, 182, 212, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
         }
 
         .breadcrumb span:hover {
-            color: var(--accent-cyan);
+            color: #fff;
+            background: var(--accent-cyan);
         }
 
         .view-section {
@@ -754,7 +758,7 @@
         </div>
         <div class="nav-controls">
             <button class="btn-toggle" onclick="app.openThemeModal()" title="Themes">
-                <span id="theme-icon">🎨</span> <span>Themes</span>
+                <span id="theme-icon">🎨</span> <span class="hide-mobile">Themes</span>
             </button>
             <button class="btn-toggle" onclick="app.requestModeToggle()" id="mode-btn" title="Toggle Mode">
                 <span>🎓</span> <span id="mode-text">Study Mode</span>
@@ -828,7 +832,7 @@
     
     <div id="pwa-update-toast">
         <span>🚀 New update available from Developer!</span>
-        <button class="btn-update" onclick="window.location.reload(true)">Update PWA</button>
+        <button class="btn-update" onclick="app.updateApp()">Update PWA</button>
     </div>
 
     <div class="modal-overlay" id="theme-modal">
@@ -915,12 +919,11 @@
         // ==========================================
         // PWA UPDATE CHECKER & APP VERSION
         // ==========================================
-        const APP_VERSION = '1.0.1'; 
+        const APP_VERSION = '1.0.2'; 
         
         if (localStorage.getItem('rebyu_version') !== APP_VERSION) {
             setTimeout(() => {
                 document.getElementById('pwa-update-toast').classList.add('pwa-toast-active');
-                localStorage.setItem('rebyu_version', APP_VERSION);
             }, 1500);
         }
 
@@ -945,7 +948,7 @@
         const manifestData = {
             "name": "Rebyu Academic Hub", "short_name": "Rebyu", "start_url": ".", "display": "standalone",
             "background_color": "#0a0e17", "theme_color": "#0a0e17",
-            "icons": [{"src": "data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='gC' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2306b6d4'/%3E%3Cstop offset='100%25' stop-color='%233b82f6'/%3E%3C/linearGradient%3E%3ClinearGradient id='gP' x1='0%25' y1='100%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23a855f7'/%3E%3Cstop offset='100%25' stop-color='%23f43f5e'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M 12 70 C 25 70 40 55 50 75 C 60 55 75 70 88 70 L 88 35 C 75 35 60 20 50 40 C 40 20 25 35 12 35 Z' fill='none' stroke='url(%23gC)' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cline x1='50' y1='40' x2='50' y2='75' stroke='url(%23gC)' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M 25 55 L 45 35 L 60 50 L 90 15' fill='none' stroke='url(%23gP)' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M 70 15 L 90 15 L 90 35' fill='none' stroke='url(%23gP)' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='25' cy='55' r='5' fill='%23a855f7' /%3E%3C/svg%3E", "sizes": "512x512", "type": "image/svg+xml"}]
+            "icons": [{"src": "data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='gC' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2306b6d4'/%3E%3Cstop offset='100%25' stop-color='%233b82f6'/%3E%3C/linearGradient%3E%3ClinearGradient id='gP' x1='0%25' y1='100%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23a855f7'/%3E%3Cstop offset='100%25' stop-color='%23f43f5e'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M 50 15 L 15 30 L 15 65 C 15 80 40 90 50 95 C 60 90 85 80 85 65 L 85 30 Z' fill='none' stroke='url(%23gC)' stroke-width='4' stroke-linejoin='round'/%3E%3Cpath d='M 35 70 L 35 35 L 55 35 C 65 35 65 50 55 50 L 35 50 M 50 50 L 65 70' fill='none' stroke='url(%23gP)' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E", "sizes": "512x512", "type": "image/svg+xml"}]
         };
         document.getElementById('dynamic-manifest').href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifestData));
 
@@ -1041,6 +1044,11 @@
                     const loader = document.getElementById('page-loader');
                     if(loader) loader.classList.add('hidden');
                 }, 500);
+            },
+
+            updateApp() {
+                localStorage.setItem('rebyu_version', APP_VERSION);
+                window.location.reload(true);
             },
 
             loadTheme() {
@@ -1228,14 +1236,6 @@
                 }, 50);
             },
 
-            goBack() {
-                if (this.currentLevel === 'course') {
-                    this.navigate('term', this.activeTermId);
-                } else if (this.currentLevel === 'term') {
-                    this.navigate('home');
-                }
-            },
-
             updateUI() {
                 document.getElementById('admin-add-term').classList.remove('visible');
                 document.getElementById('admin-add-course').classList.remove('visible');
@@ -1290,8 +1290,8 @@
                     if (this.mode === 'admin') {
                         adminActions = `
                             <div style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: flex-end;" onclick="event.stopPropagation()">
-                                <button class="btn-edit" onclick="app.openEditCourseModal('${course.id}')">✏️ Edit</button>
-                                <button class="btn-danger" onclick="app.promptDelete('course', '${course.id}')">🗑️ Delete</button>
+                                <button class="btn-edit" onclick="app.openEditCourseModal('${course.id}')" style="font-size: 0.8rem; padding: 0.3rem 0.6rem;">✏️ Edit</button>
+                                <button class="btn-danger" onclick="app.promptDelete('course', '${course.id}')" style="font-size: 0.8rem; padding: 0.3rem 0.6rem;">🗑️ Delete</button>
                             </div>
                         `;
                     }
@@ -1374,16 +1374,25 @@
                     }
                     actionBtnsHtml = `<a href="${finalUrl}" target="_blank" class="btn-action">View Link</a>`;
                 } else if (topic.sourceMethod === 'file') {
+                    let viewUrl = rawUrl;
+                    let downloadUrl = rawUrl;
+
+                    if (downloadUrl.includes('supabase.co')) {
+                        downloadUrl += (downloadUrl.includes('?') ? '&' : '?') + "download=";
+                    }
+
+                    if (['doc', 'sheet', 'slide'].includes(topic.type)) {
+                        viewUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(rawUrl)}`;
+                    }
+
                     if (topic.type === 'image') {
-                        actionBtnsHtml = `<a href="${rawUrl}" target="_blank" class="btn-action">View Image</a>`;
-                    } else {
-                        let downloadUrl = rawUrl;
-                        if (downloadUrl.includes('supabase.co')) {
-                            downloadUrl += (downloadUrl.includes('?') ? '&' : '?') + "download=";
-                        }
-                        
                         actionBtnsHtml = `
-                            <a href="${rawUrl}" target="_blank" class="btn-action" style="margin-right: 0.5rem;">View</a>
+                            <a href="${viewUrl}" target="_blank" class="btn-action" style="margin-right: 0.5rem;">View Image</a>
+                            <a href="${downloadUrl}" target="_blank" class="btn-action">Download</a>
+                        `;
+                    } else {
+                        actionBtnsHtml = `
+                            <a href="${viewUrl}" target="_blank" class="btn-action" style="margin-right: 0.5rem;">View</a>
                             <a href="${downloadUrl}" target="_blank" class="btn-action">Download</a>
                         `;
                     }
@@ -1536,7 +1545,7 @@
                 term.courses.push({ 
                     id: this.generateId(), 
                     name: input.value, 
-                    instructor: "", 
+                    instructor: "", // Optional Instructor field initialized
                     color: colorInput.value, 
                     topics: [] 
                 }); 
